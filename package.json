@@ -1,0 +1,52 @@
+{
+  "name": "nextjs_coresystem",
+  "version": "1.2.1",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p $PORT",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guillebacigalupo/ganasafi.git"
+  },
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^34.2.0",
+    "@ckeditor/ckeditor5-react": "^5.0.2",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@next-auth/prisma-adapter": "^0.5.4",
+    "@premieroctet/next-crud": "^1.1.0",
+    "@prisma/client": "^4.0.0",
+    "axios": "^0.21.4",
+    "bootstrap": "^5.1.1",
+    "busboy": "^1.6.0",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^10.0.0",
+    "file-loader": "^6.2.0",
+    "freezer-js": "github:yosietserga/freezerjs",
+    "html5-file-selector": "^2.1.0",
+    "js-cookie": "^3.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "next": "^12.1.6",
+    "next-auth": "^3.29.5",
+    "next-themes": "^0.2.0",
+    "node-persist": "^3.1.0",
+    "nodemailer": "^6.7.5",
+    "pm2": "^5.1.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-dropzone-uploader": "^2.11.0",
+    "react-google-recaptcha": "^2.1.0",
+    "react-responsive": "^9.0.0-beta.10",
+    "react-toastify": "^9.0.5",
+    "reactstrap": "^8.10.0",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.1.0",
+    "prisma": "^4.0.0"
+  }
+}

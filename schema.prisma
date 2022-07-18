@@ -1,0 +1,393 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.db"
+}
+
+model Language {
+  id          Int     @id @default(autoincrement())
+  uuid        String  @unique @default(cuid())
+  name        String
+  code        String  @unique
+  locale      String?
+  image       String?
+  folder      String?
+  status      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+model Property {
+  id          Int     @id @default(autoincrement())
+  uuid        String  @unique @default(cuid())
+  objectId    Int
+  objectType  String
+  dataType    String
+  group       String
+  key         String
+  value       String?
+  status      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime? @updatedAt
+
+  @@index([objectId, objectType], name: "object_index_property")
+  @@unique([objectId, objectType, group, key], name: "object_property")
+}
+
+model Setting {
+  id          Int     @id @default(autoincrement())
+  uuid        String  @unique @default(cuid())
+  storeId     Int     @default(0)
+  dataType    String
+  group       String
+  key         String
+  value       String?
+  status      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime? @updatedAt
+
+  store       Store      @relation(fields: [storeId], references: [id], onDelete: NoAction)
+
+  @@unique([storeId, group, key], name: "setting_group_key")
+}
+
+model Content {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @unique @default(cuid())
+  languageId      Int      @default(1)
+  objectId        Int
+  objectType      String
+  slug            String?
+  title           String?
+  description     String?
+  seoTitle        String?
+  seoDescription  String?
+  status          Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime? @updatedAt
+
+  @@index([objectId, objectType], name: "object_index_content")
+  @@unique([languageId, objectId, objectType], name: "object_content")
+}
+
+model Category {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @unique @default(cuid())
+  storeId         Int      @default(0)
+  objectId        Int
+  objectType      String
+  ref             String?
+  name            String?
+  status          Int?
+  deleted         Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime? @updatedAt
+
+  posts           PostToCategory[]
+
+  store           Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([objectId, objectType], name: "category_index")
+}
+
+model Post {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @unique @default(cuid())
+  post_type    String   @default("post")
+  parentId     Int      @default(0)
+  storeId      Int
+  authorId     Int?
+  image        String?
+  ref          String?
+  status       Int?
+  deleted      Int?
+  publishAt    DateTime  @default(now())
+  publishUntil DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+  
+  categories   PostToCategory[]
+
+  store        Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
+
+model PostToCategory {
+  id            Int      @id @default(autoincrement())
+  uuid          String   @unique @default(cuid())
+  postId        Int
+  categoryId    Int
+
+  categories    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  posts         Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@unique([postId, categoryId])
+}
+
+model Session {
+  id           Int       @id @default(autoincrement())
+  uuid         String    @unique @default(cuid())
+  sessionToken String    @unique
+  storeId      Int
+  personId     Int
+  expires      DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+
+  person       Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+}
+
+model ProfileGroup {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @unique @default(cuid())
+  type            String   @default("group")
+  profileTypeId   Int      @default(0)
+  storeId         Int      @default(0)
+  name            String
+  image           String?
+  status          Int?
+  deleted         Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
+
+  profileType     ProfileType      @relation(fields: [profileTypeId], references: [id], onDelete: SetDefault)
+  store           Store            @relation(fields: [storeId], references: [id], onDelete: SetDefault)
+
+  profiles        ProfileToGroup[]
+  stores          ObjectToStore[]
+}
+
+model ProfileToGroup {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  profileId        Int
+  profileGroupId   Int
+
+  
+  groups           ProfileGroup  @relation(fields: [profileGroupId], references: [id], onDelete: Cascade)
+  profiles         Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  @@unique([profileId, profileGroupId])
+}
+
+model ProfileType {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(cuid())
+  storeId   Int      @default(0)
+  name      String
+  slug      String?
+  image     String?
+  status    Int?
+  deleted   Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  profiles Profile[]
+  groups   ProfileGroup[]
+}
+
+model Profile {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @unique @default(cuid())
+  storeId         Int      @default(0)
+  personId        Int
+  profileTypeId   Int
+  name            String
+  slug            String?
+  image           String?
+  status          Int?
+  deleted         Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
+  
+  store           Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  person          Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+  profileType     ProfileType @relation(fields: [profileTypeId], references: [id], onDelete: Cascade)
+  
+  groups         ProfileToGroup[]
+}
+
+model Person {
+  id                Int      @id @default(autoincrement())
+  uuid              String   @unique @default(cuid())
+  storeId           Int      @default(0)
+  email             String   @unique
+  phone             String   @unique
+  password          String?
+  firstname         String?
+  lastname          String?
+  username          String?
+  gender            String?
+  genderOfBirthday  String?
+  dateOfBirthday    DateTime?
+  status            Int?
+  deleted           Int?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime? @updatedAt
+  
+  profiles        Profile[]
+  accounts        Account[]
+  sessions        Session[]
+  
+  store           Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                 Int      @id @default(autoincrement())
+  uuid               String   @unique @default(cuid())
+  storeId            Int      @default(0)
+  personId           Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  file_session       String?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime? @updatedAt
+
+  store             Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  person            Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId, personId])
+}
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(cuid())
+  parentId  Int      @default(0)
+  name      String
+  folder    String   @unique 
+  image     String?
+  status    Int?
+  deleted   Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  profiles        Profile[]
+  profile_groups  ProfileGroup[]
+  posts           Post[]
+  categories      Category[]
+  persons         Person[]
+  accounts        Account[]
+  settings        Setting[]
+  objects         ObjectToStore[]
+}
+
+model ObjectToStore {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  storeId          Int      @default(0)
+  objectId         Int
+  objectType       String
+  type             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+  
+  @@unique([storeId, objectId, objectType])
+
+  stores           Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  groups           ProfileGroup  @relation(fields: [objectId], references: [id], onDelete: Cascade)
+}
+
+model PostToObject {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  postId           Int      @default(0)
+  objectId         Int
+  objectType       String
+  type             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+  
+  @@unique([postId, objectId, objectType])
+}
+
+model Channel {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  storeId          Int
+  name             String?  @unique
+  image            String?
+  type             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+
+  chats            Chat[]
+}
+
+model Chat {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  storeId          Int      @default(0)
+  categoryId       Int      @default(0)
+  channelId        Int      @default(0)
+  objectId         Int?
+  objectType       String?
+  ref              String?
+  name             String?
+  description      String?
+  image            String?
+  type             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+  @@unique([channelId, ref])
+  
+  channel          Channel    @relation(fields: [channelId], references: [id], onDelete: SetNull)
+}
+
+model ChatMember {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  storeId          Int
+  chatId           Int
+  profileId        Int
+  personId         Int
+  isAdmin          Int @default(0)
+  status           Int @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+}
+
+model Message {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  parentId         Int      @default(0)
+  storeId          Int
+  chatId           Int
+  personId         Int
+  ref              String?
+  body             String?
+  params           String?
+  type             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+  @@unique([chatId, ref])
+}
+
+model Attachment {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(cuid())
+  storeId          Int
+  messageId        Int?
+  chatId           Int?
+  objectId         Int?
+  objectType       String?
+  ref              String?
+  body             String?
+  params           String?
+  type             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+}
