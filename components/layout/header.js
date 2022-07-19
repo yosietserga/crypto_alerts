@@ -145,7 +145,7 @@ export default function Header({ data }) {
                     <div className="logo">
                       <Link href="/" >
                         <a>
-                          <Img s="logo/logoheader.png" w="250px"/>
+                          <Img s="logo/logoheader.png" w={44} />
                         </a>
                       </Link>
                     </div>

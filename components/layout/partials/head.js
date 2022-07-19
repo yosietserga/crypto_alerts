@@ -26,8 +26,7 @@ export default function HTMLHead( props ) {
     return (
       <Head nonce={props.nonce["default-src"]}>
         <title>
-          Ganasafi - Ganadero Asociación Administradora de Fondos de Inversión
-          S.A.
+          Crypto Alerts
         </title>
         <meta name="description" content="" />
         <meta name="csp-nonce" content={props.nonce["style-src"]} />

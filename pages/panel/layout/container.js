@@ -55,7 +55,7 @@ function AdminContainer(mainProps) {
   return (
     <>
       <Head>
-        <title>Admin | Ganasafi</title>
+        <title>Admin | CryptoAlerts</title>
 
         <link rel="icon" href='/favicon.ico' />
 

@@ -47,7 +47,7 @@ export default function Footer() {
             <div className="col-md-6 col-sm-6 col-xs-12">
               <div className="copyright">
                 <p>
-                  Copyright © 2021 <a href="#">GANASAFI</a> Todos los derechos
+                  Copyright © 2022 <a href="#">TU EMPRESA</a> Todos los derechos
                   reservados.
                 </p>
               </div>

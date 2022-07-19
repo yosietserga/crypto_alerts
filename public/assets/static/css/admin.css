@@ -19138,7 +19138,7 @@ h1,h2,h3,h4,h5,h6 {
 .logo {
     width: 78px
 }
-
+.logo img { margin-top:-20px;}
 .wrapper {
     margin-top: 60px;
 }
