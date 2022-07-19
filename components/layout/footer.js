@@ -41,50 +41,6 @@ export default function Footer() {
 
   return (
     <footer className="footer-1">
-      <div className="footer-area">
-        <div className="container">
-          <div className="row">
-            {" "}
-            <div className="col-md-6 col-sm-6 col-xs-12">
-              <div className="footer-content logo-footer">
-                <div className="footer-head">
-                  <div className="footer-logo">
-                    <Link href="/">
-                      <a className="footer-black-logo">
-                        <Img s="logo/logofooter.png" w="400px" a="" />
-                      </a>
-                    </Link>
-                  </div>
-                  <p>
-                    La oficina principal de GanaSafi S.A. se encuentra ubicada
-                    en la Calle Murillo Nº 89, Planta Alta, de la ciudad de
-                    Santa Cruz, teléfono 591- (3) 317-0400.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3 col-md-offset-3 col-sm-6 col-xs-12">
-              <div className="footer-content">
-                <div className="footer-head">
-                  <h4 className="text-light-green">Fondos de Inversión</h4>
-                  <ul className="footer-list">
-                    <li>
-                      <Link href="/productos/gana-inversiones">
-                        <a>GanaInversiones</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/productos/gana-rendimiento">
-                        <a>GanaRendimiento</a>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="footer-area-bottom">
         <div className="container">
           <div className="row">
@@ -129,13 +85,6 @@ export default function Footer() {
           />
         );
       })}
-
-      <noscript
-        dangerouslySetInnerHTML={{
-          __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PD6NWJG"
-height="0" width="0" style="display:none;visibility:hidden" nonce="${global.nonce["default-src"]}"></iframe>`,
-        }}
-      ></noscript>
     </footer>
   );
 }

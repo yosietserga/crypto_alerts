@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import { StoreContext } from "../../../context/store";
 import { isset, empty, ucfirst } from "../../../utils/common";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
   getContents,
   setTitle,
@@ -70,8 +69,10 @@ export default function InputContent(props) {
   if (empty(languageId)) return null;
   if (empty(objectId)) return null;
 
+  let CKEditor;
   let ClassicEditor;
   if (isset(window) && ["description"].includes(fieldName)) {
+    CKEditor = require("@ckeditor/ckeditor5-react");
     ClassicEditor = require("@ckeditor/ckeditor5-build-classic");
   }
 
@@ -124,7 +125,7 @@ export default function InputContent(props) {
         <Input
           type="text"
           name={fieldName}
-          id={fieldName}
+          id={fieldName + "_" + __id}
           languageId={languageId}
           objectId={objectId}
           objectType={objectType}
@@ -138,7 +139,7 @@ export default function InputContent(props) {
         <Input
           type="textarea"
           name={fieldName}
-          id={fieldName}
+          id={fieldName + "_" + __id}
           languageId={languageId}
           objectId={objectId}
           objectType={objectType}
@@ -148,7 +149,7 @@ export default function InputContent(props) {
           disabled={disabled ?? ""}
         />
       )}
-      {w && (
+      {w && CKEditor ? (
         <CKEditor
           editor={ClassicEditor}
           data={`${__value}`}
@@ -168,6 +169,8 @@ export default function InputContent(props) {
             console.log("Focus.", editor);
           }}
         />
+      ) : (
+        ""
       )}
     </FormGroup>
   );

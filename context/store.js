@@ -43,6 +43,7 @@ const __delete = (k) => {
 const StoreContext = React.createContext(store);
 
 const StoreProvider = ({ children }) => {
+  /*
   store.on("beforeAll", (eventName, state)=>{
     console.log("Store::beforeAll", eventName, state);
   });
@@ -50,6 +51,7 @@ const StoreProvider = ({ children }) => {
   store.on("afterAll", (eventName, state)=>{
     console.log("Store::afterAll", eventName, state);
   });
+  */
 
   store.set("init", true);
   

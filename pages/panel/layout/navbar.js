@@ -19,32 +19,29 @@ function NavBar(props) {
   const { session } = props;
   return (
     <div>
-      <Navbar color="green" dark expand="sm" fixed="top">
+      <Navbar color="dark" dark expand="sm" fixed="top">
         <NavbarBrand href="/panel">
-          <Img s="logo/logo.png" a="Logo" c="admin-logo" />
+          <Img s="logo/logo.png" a="Logo" c="admin-logo" w={44} />
         </NavbarBrand>
         <NavbarToggler onClick={props.toggle} color="dark" />
         <Collapse isOpen={props.isOpen} navbar>
           <Nav className="mr-auto" navbar>
             <NavItem>
-              <NavLink href="/panel/products">Productos</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/panel/sliders">Slider</NavLink>
+              <NavLink href="/panel/alerts">Alerts</NavLink>
             </NavItem>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
-                Usuarios
+                Users
               </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem tag="div">
-                  <NavLink href="/panel/users/create" className="text-primary">
-                    Crear Usuario
+                  <NavLink href="/panel/persons/create" className="text-primary">
+                    Create User
                   </NavLink>
                 </DropdownItem>
                 <DropdownItem tag="div">
-                  <NavLink href="/panel/users" className="text-primary">
-                    Lista de Usuarios
+                  <NavLink href="/panel/persons" className="text-primary">
+                    All Users
                   </NavLink>
                 </DropdownItem>
                 

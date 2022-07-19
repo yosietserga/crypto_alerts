@@ -59,7 +59,7 @@ export function buildFiltersQueryString(f) {
       }
     });
 
-    const stringsAsArraysFields = ["ref", "post_type", "image"];
+    const stringsAsArraysFields = ["ref", "post_type", "image", "uuid"];
 
     stringsAsArraysFields.map((field) => {
       if (

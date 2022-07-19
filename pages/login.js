@@ -34,10 +34,10 @@ export default function Login(data) {
       })
       .then((data) => {
         log({ data });
-        if (typeof data.user != 'undefined' && data.user?.id) {
+        if (typeof data.person != "undefined" && data.person?.id) {
           setModal(true);
-          setModalContent('Cargando...');
-          setSession(data.user);
+          setModalContent("Cargando...");
+          setSession(data.person);
         } else {
           setSession(null);
         }
@@ -62,7 +62,7 @@ export default function Login(data) {
     setEncryptedPwd(encrypted);
 
     //POST form values
-    const res = await fetch("/api/users/login", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

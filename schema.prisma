@@ -178,7 +178,7 @@ model ProfileType {
   uuid      String   @unique @default(cuid())
   storeId   Int      @default(0)
   name      String
-  slug      String?
+  slug      String?  @unique
   image     String?
   status    Int?
   deleted   Int?

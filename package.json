@@ -1,5 +1,5 @@
 {
-  "name": "nextjs_coresystem",
+  "name": "crypto_alerts",
   "version": "1.2.1",
   "scripts": {
     "dev": "next dev",
@@ -9,17 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/guillebacigalupo/ganasafi.git"
+    "url": "git+https://github.com/yosietserga/crypto_alerts.git"
   },
   "dependencies": {
+    "@adiwajshing/baileys": "^2.3.1",
     "@ckeditor/ckeditor5-build-classic": "^34.2.0",
     "@ckeditor/ckeditor5-react": "^5.0.2",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@hapi/boom": "^10.0.0",
     "@next-auth/prisma-adapter": "^0.5.4",
     "@premieroctet/next-crud": "^1.1.0",
     "@prisma/client": "^4.0.0",
-    "axios": "^0.21.4",
+    "@types/ckeditor__ckeditor5-core": "^33.0.3",
+    "@types/ckeditor__ckeditor5-engine": "^32.0.11",
+    "axios": "^0.24.0",
+    "bignumber.js": "^7.2.1",
     "bootstrap": "^5.1.1",
     "busboy": "^1.6.0",
     "crypto-js": "^4.1.1",
@@ -29,24 +34,27 @@
     "html5-file-selector": "^2.1.0",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
     "next": "^12.1.6",
     "next-auth": "^3.29.5",
     "next-themes": "^0.2.0",
     "node-persist": "^3.1.0",
     "nodemailer": "^6.7.5",
-    "pm2": "^5.1.1",
+    "pino": "^8.2.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-dropzone-uploader": "^2.11.0",
     "react-google-recaptcha": "^2.1.0",
     "react-responsive": "^9.0.0-beta.10",
     "react-toastify": "^9.0.5",
-    "reactstrap": "^8.10.0",
-    "yarn": "^1.22.19"
+    "reactstrap": "^9.1.2",
+    "tulind": "^0.8.20",
+    "yarn": "^1.22.19",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
-    "eslint": "7.32.0",
-    "eslint-config-next": "11.1.0",
+    "eslint": "^8.20.0",
+    "eslint-config-next": "^0.2.4",
     "prisma": "^4.0.0"
   }
 }

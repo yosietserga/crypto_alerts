@@ -4,12 +4,13 @@ import Link from "next/link";
 import Img from "../image";
 
 const Logo = () => {
-  return <Img s="logo/logoheader.png" />;
+  return <Img s="logo/logoheader.png" w={44} />;
 };
 
 const Menu = (props) => {
   const { c } = props;
 
+  return <></>;
   return (
     <ul className={c ?? ""}>
       <li>
@@ -112,7 +113,7 @@ export default function Header({ data }) {
                     </div>
                     <div className="col-lg-9 col-md-10 col-sm-10">
                       <div className="header-right-link">
-                        <Link href="/URLEXTERNA" >
+                        <Link href="/login" >
                           <a className="s-menu">Ingresar</a>
                         </Link>
                       </div>

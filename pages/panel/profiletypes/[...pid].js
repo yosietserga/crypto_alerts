@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import AdminContainer from "../layout/container";
 import NextBreadcrumbs from "../../../components/ui/breadcrumbs";
 import UIModal from "../../../components/ui/modal";
-import actions from "../../../src/profiles/fragments/form";
+import actions from "../../../src/profiletypes/fragments/form";
 
 export default function ProfileTypes(props) {
   const router = useRouter();

@@ -19,17 +19,10 @@ const MENUS = [
     icon: "fas fa-chart-pie",
   },
   {
-    name: "posts",
+    name: "alerts",
     as: "a",
-    href: "/panel/posts",
-    label: "Posts",
-    icon: "fas fa-clone",
-  },
-  {
-    name: "orders",
-    as: "a",
-    href: "/panel/orders",
-    label: "Orders",
+    href: "/panel/alerts",
+    label: "Alerts",
     icon: "fas fa-clone",
   },
   {

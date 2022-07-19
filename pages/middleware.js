@@ -156,5 +156,10 @@ export const middleware = (req, event) => {
     //write CSP
     //csp(req, res); //uncomment this line to apply CSP
     
+    console.log(req.nextUrl);
+    if (req.nextUrl.pathname.startsWith("/dashboard")) {
+      // This logic is only applied to /dashboard
+    }
+
     return res;
 };

@@ -27,7 +27,7 @@ function AdminContainer(mainProps) {
     setSession({});
     removeCookie("uuid");
     removeCookie("accessToken");
-    log(getCookie("accessToken"));
+    
     window.location.href = "/login";
   };
 
@@ -38,9 +38,9 @@ function AdminContainer(mainProps) {
       })
       .then((data) => {
         log({ data });
-        if (!data?.user?.id) {
+        if (!data?.person?.id) {
           //redirect to homepage
-          //signOut();
+          signOut();
           return;
         } else {
           setSession(data);
@@ -49,7 +49,7 @@ function AdminContainer(mainProps) {
   }, [setSession]);
 
   if (!getCookie("accessToken") || !getCookie("uuid")) {
-    //signOut();
+    signOut();
   }
 
   return (
