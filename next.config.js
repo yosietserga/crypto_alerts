@@ -41,6 +41,7 @@ module.exports = {
       },
     ];
   },
+  output: "standalone",
   compiler: {
     //removeConsole: true,
   },

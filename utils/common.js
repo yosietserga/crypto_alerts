@@ -214,5 +214,7 @@ export function getVar(props, k, defaultValue) {
     : defaultValue ?? "";
 };
 
+export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 //init cookie var just when is in browser
 if (typeof window != "undefined") setCookie("init", 1);
