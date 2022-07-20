@@ -216,5 +216,12 @@ export function getVar(props, k, defaultValue) {
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+Number.prototype.toFix = function (places, rounding) {
+  rounding = rounding || "round";
+  var num = parseFloat(this),
+    multiplier = Math.pow(10, places);
+  return Number(Math[rounding](num * multiplier) / multiplier);
+};
+
 //init cookie var just when is in browser
 if (typeof window != "undefined") setCookie("init", 1);

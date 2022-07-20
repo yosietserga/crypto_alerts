@@ -2,25 +2,24 @@ import BigNumber from "bignumber.js";
 import { Container, Row, Col } from "reactstrap";
 
 const Li = (props) => (
-      <Row>
-            <Col sm={2}>{props.symbol}</Col>
-            <Col sm={2}>{new BigNumber(props.lastPrice).toFormat(null, 1)}</Col>
-            <Col
-              className={
-                props.priceChangePercent < 0
-                  ? "col text-danger"
-                  : "col text-success"
-              }
-              sm={2}
-            >
-              {`${new BigNumber(props.priceChangePercent).toFormat(2, 1)}%`}
-            </Col>
-            <Col sm={2}>{new BigNumber(props.highPrice).toFormat(null, 1)}</Col>
-            <Col sm={2}>{new BigNumber(props.lowPrice).toFormat(null, 1)}</Col>
-            <Col sm={2}>
-              {new BigNumber(props.quoteVolume).toFormat(null, 1)}
-            </Col>
-      </Row>
+  <Row>
+    <Col sm={2}>{props.symbol}</Col>
+    <Col sm={2}>{new BigNumber(props.lastPrice).toFormat(null, 1)}</Col>
+    <Col
+      className={
+        props.priceChangePercent < 0 ? "col text-danger" : "col text-success"
+      }
+      sm={2}
+    >
+      <strong>{`${new BigNumber(props.priceChangePercent).toFormat(
+        2,
+        1
+      )}%`}</strong>
+    </Col>
+    <Col sm={2}>{new BigNumber(props.highPrice).toFormat(null, 1)}</Col>
+    <Col sm={2}>{new BigNumber(props.lowPrice).toFormat(null, 1)}</Col>
+    <Col sm={2}>{new BigNumber(props.quoteVolume).toFormat(null, 1)}</Col>
+  </Row>
 );
 
 const DataTable = (props) => {
