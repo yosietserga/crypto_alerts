@@ -28,7 +28,7 @@ const CryptoCard = (props) => {
 
   const params = "action=indicators&symbol=" + symbol;
 
-  const loadData = () => {
+  const loadData = React.useCallback(() => {
     __timeframes.map((t) => {
       let p = params +"&" + "timeframe=" + t;
 
@@ -50,7 +50,7 @@ const CryptoCard = (props) => {
         }
       });
     });
-  }
+  });
 
   React.useEffect(() => {
     loadData();

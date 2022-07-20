@@ -285,7 +285,7 @@ export function FileUploadComponent({ setImage }) {
         {textMsg}
         <input
           style={{ display: "none" }}
-          nonce={global.nonce["style-src"]}
+          nonce={global?.nonce["style-src"]}
           type="file"
           accept={accept}
           multiple

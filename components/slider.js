@@ -36,7 +36,8 @@ export default function Slider({ sliders }) {
           } );`,
           }}
           strategy="lazyOnload"
-          nonce={global.nonce["script-src"]}
+          nonce={global?.nonce["script-src"]}
+          id="slidersScript"
         />
       )}
       {/* End Slider content */}

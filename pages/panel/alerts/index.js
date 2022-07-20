@@ -24,7 +24,7 @@ export default function CryptoAlerts() {
   const [modalContent, setModalContent] = useState("");
   const toggle = () => setModal(!modal);
 
-  const loadData = async () => {
+  const loadData = React.useCallback(async () => {
     if (dataLoaded) return; 
     setData(
       await modelPosts.getAll({
@@ -32,7 +32,7 @@ export default function CryptoAlerts() {
       })
     );
     setLoaded(true);
-  }
+  });
 
   React.useEffect(() => {
     loadData();

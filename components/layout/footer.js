@@ -58,7 +58,7 @@ export default function Footer() {
 
       {jsFirstFiles.map((src) => {
         return (
-          <Script key={src} src={src} nonce={global.nonce["script-src"]} />
+          <Script key={src} src={src} nonce={global?.nonce["script-src"]} />
         );
       }) ?? ""}
 
@@ -70,7 +70,7 @@ export default function Footer() {
               src={src}
               strategy="afterInteractive"
               defer
-              nonce={global.nonce["script-src"]}
+              nonce={global?.nonce["script-src"]}
             />
           );
         })}
@@ -81,7 +81,7 @@ export default function Footer() {
             key={src}
             src={src}
             strategy="lazyOnload"
-            nonce={global.nonce["script-src"]}
+            nonce={global?.nonce["script-src"]}
           />
         );
       })}
