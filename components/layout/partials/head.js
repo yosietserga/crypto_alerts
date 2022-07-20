@@ -5,8 +5,8 @@ import { StoreContext } from "../../../context/store";
 export default function HTMLHead( props ) {
     const store = React.useContext(StoreContext);
     
-    store.set("nonce", props.nonce);
-    store.set("csp", props.csp);
+    store.set("nonce", props?.nonce);
+    store.set("csp", props?.csp);
 
     const cssFiles = [
       "/assets/static/css/bootstrap.min.css",
@@ -24,7 +24,7 @@ export default function HTMLHead( props ) {
     ];
     
     return (
-      <Head nonce={props.nonce["default-src"]}>
+      <Head nonce={props?.nonce["default-src"]}>
         <title>
           Crypto Alerts
         </title>
@@ -46,7 +46,7 @@ export default function HTMLHead( props ) {
                     href={href}
                     rel="stylesheet"
                     type="text/css"
-                    nonce={props.nonce["style-src"]}
+                    nonce={props?.nonce["style-src"]}
                     />
                 )
             }) ?? ""
