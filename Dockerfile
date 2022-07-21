@@ -1,12 +1,14 @@
 # Install dependencies only when needed
-FROM node:14.16.1-alpine AS deps
+FROM node:16.15.1-alpine AS deps
 RUN apk add --no-cache libc6-compat nasm autoconf automake bash libltdl libtool gcc make g++ zlib-dev
+RUN apk add --no-cache git
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --network-timeout 1000000
+COPY package.json ./
+RUN npm install -g npm@8.15.0
+RUN npm install
 # ==================================================================
 # Rebuild the source code only when needed
-FROM node:14.16.1-alpine AS builder
+FROM node:16.15.1-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -14,10 +16,10 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
-RUN yarn build
+RUN npm run build
 # ==================================================================
 # Production image, copy all the files and run next
-FROM node:14.16.1-alpine AS runner
+FROM node:16.15.1-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
@@ -26,7 +28,7 @@ RUN apk add --no-cache libc6-compat nasm autoconf automake bash
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 # You only need to copy next.config.js if you are NOT using the default configuration
-# COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next ./.next
@@ -39,5 +41,4 @@ COPY .env ./
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
-# CMD ["node", "server.js"]
-CMD ["yarn", "serve"]
+CMD ["npm", "run", "dev"]
