@@ -3,9 +3,13 @@ FROM node:16.15.1-alpine AS deps
 RUN apk add --no-cache libc6-compat nasm autoconf automake bash libltdl libtool gcc make g++ zlib-dev
 RUN apk add --no-cache git
 WORKDIR /app
-COPY package.json ./
 RUN npm install -g npm@8.15.0
-RUN npm install
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN \
+    [ -f yarn.lock ] && yarn --frozen-lockfile --prod || \
+    [ -f package-lock.json ] && npm ci || \
+    [ -f pnpm-lock.yaml ] && yarn global add pnpm && pnpm fetch --prod && pnpm i -r --offline --prod || \
+    (echo "Lockfile not found." && exit 1)
 # ==================================================================
 # Rebuild the source code only when needed
 FROM node:16.15.1-alpine AS builder
@@ -41,6 +45,8 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY .env ./
 RUN chown -R nextjs /app
+RUN npx prisma generate
+RUN npx prisma migrate dev
 # Automatically leverage output traces to reduce image size 
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 # COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
@@ -48,4 +54,4 @@ RUN chown -R nextjs /app
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
