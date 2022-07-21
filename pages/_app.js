@@ -18,9 +18,8 @@ function MyApp({ Component, pageProps, nonce, csp }) {
 
   return (
     <>
-      <HTMLHead nonce={nonce} csp={csp} />
-
       <DisableSSR>
+        <HTMLHead nonce={nonce} csp={csp} />
         <ThemeProvider>
           <StoreProvider>
             <Component {...pageProps} />
