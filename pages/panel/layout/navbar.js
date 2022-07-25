@@ -1,5 +1,6 @@
 import React, { useState, useEffect, memo } from "react";
 import {
+  Row, Col,
   Collapse,
   Navbar,
   NavbarToggler,
@@ -21,7 +22,9 @@ function NavBar(props) {
     <div>
       <Navbar color="dark" dark expand="sm" fixed="top">
         <NavbarBrand href="/panel">
-          <Img s="logo/logo.png" a="Logo" c="admin-logo" w={44} />
+          <Col sm={3}>
+            <Img s="logo/logo.png" a="Logo" c="admin-logo" w={44} h={58} />
+          </Col>
         </NavbarBrand>
         <NavbarToggler onClick={props.toggle} color="dark" />
         <Collapse isOpen={props.isOpen} navbar>
@@ -33,9 +36,12 @@ function NavBar(props) {
               <DropdownToggle nav caret>
                 Users
               </DropdownToggle>
-              <DropdownMenu right>
+              <DropdownMenu end>
                 <DropdownItem tag="div">
-                  <NavLink href="/panel/persons/create" className="text-primary">
+                  <NavLink
+                    href="/panel/persons/create"
+                    className="text-primary"
+                  >
                     Create User
                   </NavLink>
                 </DropdownItem>
@@ -44,14 +50,13 @@ function NavBar(props) {
                     All Users
                   </NavLink>
                 </DropdownItem>
-                
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
           <UncontrolledDropdown inNavbar>
             <DropdownToggle caret nav className="text-secondary">
               <NavbarText className="align-self-center text-left font-weight-bold">
-                {session?.user?.name ??  `Mi Cuenta`}
+                {session?.user?.name ?? `Mi Cuenta`}
               </NavbarText>
             </DropdownToggle>
             <DropdownMenu>
@@ -64,7 +69,7 @@ function NavBar(props) {
                   }}
                 >
                   <i className="fas fa-home"></i>
-                   &nbsp;Cerrar Sesión
+                  &nbsp;Cerrar Sesión
                 </a>
               </DropdownItem>
             </DropdownMenu>

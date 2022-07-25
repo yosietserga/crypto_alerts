@@ -68,6 +68,13 @@ const MENUS = [
     icon: "fas fa-user",
   },
   {
+    name: "whatsapp_accounts",
+    as: "a",
+    href: "/panel/whatsapps",
+    label: "Whatsapp Accounts",
+    icon: "fas fa-user",
+  },
+  {
     name: "settings",
     as: "a",
     href: "/panel/settings",
@@ -76,6 +83,8 @@ const MENUS = [
   },
 ];
 
+//TODO: load menu from DB 
+//TODO: check modules status before show it 
 function SideBar(props) {
   const { activeLink, session } = props;
   

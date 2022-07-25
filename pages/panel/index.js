@@ -4,16 +4,20 @@ import DataTable from "../../components/datatableMarketpairs";
 import CryptoCard from "../../components/cardMarketpair";
 import { Row } from "reactstrap";
 import { StoreContext } from "../../context/store";
+import { WsContext } from "../../context/ws";
 import { isset, empty, delay } from "../../utils/common";
 import {
   initSocketStream,
   connectSocketStreams,
 } from "../../libs/services/binance";
 
+let isLoaded;
+
 export default function Stores() {
   const [market_pairs, setMarketPairs] = useState({});
 
   const store = React.useContext(StoreContext);
+  const ws = React.useContext(WsContext);
 
   store.on("UPDATE_MARKET_PAIRS", (data) => {
     try {
@@ -27,9 +31,8 @@ export default function Stores() {
 
   React.useEffect(() => {
     connectSocketStreams(["!ticker@arr"]);
-    
   }, []);
-  
+
   return (
     <AdminContainer>
       <h1>Market Pairs</h1>

@@ -1,6 +1,5 @@
-import { isset, empty } from "../../utils/common";
-
-const ws = {};
+import {isset, empty } from "../../utils/common";
+ const ws = {};
 const __data = {}; 
 
 export function initSocketStream(store) {
@@ -9,27 +8,62 @@ export function initSocketStream(store) {
   }
 }
 
-export function getTickerBySymbol(data) {
-  let ticker = {};
+const getTick = (data) => {
+  let __data = {};
 
-  data.forEach((item) => {
-    let symbol = item.symbol || item.s;
-    ticker[symbol] = {
-      symbol: symbol,
-      lastPrice: item.lastPrice || item.c,
-      priceChange: item.priceChange || item.p,
-      priceChangePercent: item.priceChangePercent || item.P,
-      highPrice: item.highPrice || item.h,
-      lowPrice: item.lowPrice || item.l,
-      quoteVolume: item.quoteVolume || item.q,
-    };
+  const indexes = {
+    e: "eventType",
+    E: "eventTime",
+    s: "symbol",
+    p: "priceChange",
+    P: "percentChange",
+    w: "averagePrice",
+    c: "close",
+    Q: "closeQty",
+    o: "open",
+    h: "high",
+    l: "low",
+    v: "volume",
+    q: "quoteVolume",
+    O: "openTime",
+    C: "closeTime",
+    F: "firstTradeId",
+    L: "lastTradeId",
+    n: "numTrades",
+  };
+       
+  Object.keys(data).map(i => {
+    __data[i.length === 1 ? indexes[i] : i] = data[i];
   });
 
-  return ticker;
+  return __data;
+}
+
+export function getTickerBySymbol(data) {
+  if (!isset(__data?.ticker)) __data.ticker = {};
+
+  if (Array.isArray(data)) {
+    data.forEach((item) => {
+      let symbol = item.symbol || item.s;
+      if (!isset(__data.ticker[symbol])) __data.ticker[symbol] = {};
+
+      __data.ticker[symbol] = getTick(item);
+    });
+  } else if (typeof data.symbol !== "undefined") {
+    let symbol = data.symbol || data.s;
+    
+    if (!isset(__data.ticker[symbol])) __data.ticker[symbol] = {};
+
+    __data.ticker[symbol] = getTick(data);
+  }
+
+  return __data.ticker;
 }
 
 export function connectSocketStreams(streams) {
-  streams = streams.join("/");
+  streams = (!empty(streams) && Array.isArray(streams)) ? streams.join("/") : streams;
+  
+  if (empty(streams)) return false;
 
   let connection = btoa(streams);
 
@@ -37,6 +71,7 @@ export function connectSocketStreams(streams) {
   ws[connection] =
     binanceWS[connection] ??
     new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+
   __data.store.set("binanceWS", ws);
 
   ws[connection].onmessage = (evt) => {

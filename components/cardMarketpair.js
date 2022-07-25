@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import React from "react";
+import { Sparklines, SparklinesLine, SparklinesSpots } from "react-sparklines";
 import {
   Container,
   Row,
@@ -18,6 +19,8 @@ let i = setInterval(() => {
   memo = [];
 }, 1000 * 30);
 
+let __data = {};
+
 const CryptoCard = (props) => {
   const { symbol, timeframe, indicators } = props;
   const __timeframes = Array.isArray(timeframe) ? timeframe : timeframe.split(",");
@@ -25,6 +28,7 @@ const CryptoCard = (props) => {
 
   const [lastPrice, setLastPrice] = React.useState(0);
   const [indicatorsArray, setIndicatorsArray] = React.useState({});
+  const [sampleData, setSampleData] = React.useState([]);
 
   const params = "action=indicators&symbol=" + symbol;
 
@@ -42,9 +46,10 @@ const CryptoCard = (props) => {
             })
             .then((resp) => {
               setLastPrice(resp.ticks[symbol.toUpperCase()]?.data.close.pop());
+              if (t==="4h") setSampleData(resp.ticks[symbol.toUpperCase()]?.data.close);
               let indi = resp.ticks[symbol.toUpperCase()]?.indicators;
               if (!empty(indi)) {
-                setIndicatorsArray({ ...indicatorsArray, ...{ [t]: indi } });
+                __data = { ...__data, ...{ [t]: indi } };
               }
             });
         }
@@ -56,28 +61,31 @@ const CryptoCard = (props) => {
     loadData();
   }, [loadData]);
 
-  console.log(indicatorsArray);
-
   let arrayOfIndicators = [];
-  for (let t of Object.keys(indicatorsArray)) {
-    let indi = indicatorsArray[t];
+  for (let t of Object.keys(__data)) {
+    let indi = __data[t];
 
     let time = t;
     for (let i in indi) {
       let values = indi[i];
-      console.log(values);
-      arrayOfIndicators.push((
-        <div key={symbol+t+i}>
-          <strong>{ucfirst(i)} {t}: </strong>
-          {values.map(n => { return parseFloat(n).toFix(2) }).join(" | ")}
+      arrayOfIndicators.push(
+        <div key={symbol + t + i}>
+          <strong>
+            {ucfirst(i)} {t}:{" "}
+          </strong>
+          {values
+            .map((n) => {
+              return parseFloat(n).toFix(2);
+            })
+            .join(" | ")}
         </div>
-      ));
+      );
     }
   }
   
   return (
     <>
-      <Col sm={4}>
+      <Col sm={6}>
         <Card>
           <CardBody>
             <CardTitle tag="h5">{symbol.toUpperCase()}</CardTitle>
@@ -85,7 +93,20 @@ const CryptoCard = (props) => {
               <h2>{parseFloat(lastPrice).toFix(2)}</h2>
               {!empty(arrayOfIndicators) && arrayOfIndicators}
 
-              {!empty(indicatorsArray) && (
+              {!empty(__data) && (
+                <Sparklines data={sampleData} height={40} limit={500}>
+                  <SparklinesLine
+                    style={{
+                      stroke: "#8ed53f",
+                      strokeWidth: "1",
+                      fill: "none",
+                    }}
+                  />
+                  <SparklinesSpots />
+                </Sparklines>
+              )}
+
+              {!empty(__data) && (
                 <p>
                   <small>
                     last update {moment().startOf("minute").fromNow()}

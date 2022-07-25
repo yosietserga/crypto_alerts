@@ -4,20 +4,17 @@ import { Container, Row, Col } from "reactstrap";
 const Li = (props) => (
   <Row>
     <Col sm={2}>{props.symbol}</Col>
-    <Col sm={2}>{new BigNumber(props.lastPrice).toFormat(null, 1)}</Col>
+    <Col sm={2}>{new BigNumber(props.close).toFormat(null, 1)}</Col>
     <Col
       className={
         props.priceChangePercent < 0 ? "col text-danger" : "col text-success"
       }
       sm={2}
     >
-      <strong>{`${new BigNumber(props.priceChangePercent).toFormat(
-        2,
-        1
-      )}%`}</strong>
+      <strong>{`${new BigNumber(props.percentChange).toFormat(2, 1)}%`}</strong>
     </Col>
-    <Col sm={2}>{new BigNumber(props.highPrice).toFormat(null, 1)}</Col>
-    <Col sm={2}>{new BigNumber(props.lowPrice).toFormat(null, 1)}</Col>
+    <Col sm={2}>{new BigNumber(props.high).toFormat(null, 1)}</Col>
+    <Col sm={2}>{new BigNumber(props.low).toFormat(null, 1)}</Col>
     <Col sm={2}>{new BigNumber(props.quoteVolume).toFormat(null, 1)}</Col>
   </Row>
 );
@@ -34,7 +31,7 @@ const DataTable = (props) => {
   }
   return (
     <>
-      <Container>
+      <Container className="table">
           <Row>
             <Col sm={2}>Pair</Col>
             <Col sm={2}>Last Price</Col>

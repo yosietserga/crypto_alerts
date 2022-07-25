@@ -1,5 +1,6 @@
 import HTMLHead from "../components/layout/partials/head.js";
 import { StoreProvider } from "../context/store";
+import { WsProvider } from "../context/ws";
 import { ThemeProvider } from "next-themes";
 import React from "react";
 
@@ -22,7 +23,9 @@ function MyApp({ Component, pageProps, nonce, csp }) {
         <HTMLHead nonce={nonce} csp={csp} />
         <ThemeProvider>
           <StoreProvider>
-            <Component {...pageProps} />
+            <WsProvider>
+              <Component {...pageProps} />
+            </WsProvider>
           </StoreProvider>
         </ThemeProvider>
       </DisableSSR>

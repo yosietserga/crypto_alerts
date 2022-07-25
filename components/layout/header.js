@@ -96,24 +96,23 @@ export default function Header({ data }) {
                 <div className="col-md-12 col-sm-12">
                   <div className="row">
                     <div className="col-lg-3 col-md-2 col-sm-2">
-                      <div className="logo">
-                          <Link href="/" >
-                            <a className="navbar-brand page-scroll white-logo">
-                              <Logo />
-                            </a>
-                          </Link>
-                          
-                          <Link href="/" >
-                            <a  className="navbar-brand page-scroll black-logo">
-                              <Logo />
-                            </a>
-                          </Link>
-                        
+                      <div className="logo col-md-1">
+                        <Link href="/">
+                          <a className="navbar-brand page-scroll white-logo">
+                            <Logo />
+                          </a>
+                        </Link>
+
+                        <Link href="/">
+                          <a className="navbar-brand page-scroll black-logo">
+                            <Logo />
+                          </a>
+                        </Link>
                       </div>
                     </div>
                     <div className="col-lg-9 col-md-10 col-sm-10">
                       <div className="header-right-link">
-                        <Link href="/login" >
+                        <Link href="/login">
                           <a className="s-menu">Ingresar</a>
                         </Link>
                       </div>
@@ -142,8 +141,8 @@ export default function Header({ data }) {
               <div className="row">
                 <div className="col-md-12">
                   <div className="mobile-menu">
-                    <div className="logo">
-                      <Link href="/" >
+                    <div className="logo col-md-1">
+                      <Link href="/">
                         <a>
                           <Img s="logo/logoheader.png" w={44} />
                         </a>
