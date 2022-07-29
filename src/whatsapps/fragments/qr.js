@@ -1,7 +1,7 @@
-import React from "react";
+import {useState, useEffect, useCallback} from "react";
 import qr from "qr-image";
-import { WsContext } from "../../../context/ws";
-import { empty, isset } from "../../../utils/common";
+import io from "socket.io-client";
+import { empty, isset, log } from "../../../utils/common";
 
 let i;
 let isLoaded;
@@ -9,20 +9,51 @@ let lastFilename;
 
 const WhatsappQR = (props) => {
   const { filename } = props;
-  const [qrImage, setQR] = React.useState();
+  const [qrImage, setQR] = useState();
+  const [socket, setSocket] = useState();
+  const [isConnected, setConnected] = useState(true);
 
   if (!empty(filename)) {    
     fetch("http://localhost:3000/api/ws?f="+ filename);
   }
 
-  const ws = React.useContext(WsContext);
+  const loadWS = useCallback(async () => {
+    if (!socket) {
+      setSocket(
+        io("/whatsapp", {
+          withCredentials: false,
+          transports: ["websocket"],
+        })
+      );
 
-  React.useEffect(() => {
+      socket?.on("connect", () => {
+        setConnected(true);
+      });
+    }
+  }, [socket, setSocket, setConnected]);
+
+  useEffect(() => {
+    loadWS();
+
     if (!isLoaded || lastFilename !== filename) {
       isLoaded = lastFilename === filename;
       lastFilename = filename;
+    }
 
-      ws.socket.on("whatsapp.connection.update", (m) => {
+    if (isConnected && socket) {
+      socket?.on("error", (msg) => {
+        log("error", msg);
+      });
+
+      socket?.on("open", (msg) => {
+        log("opened", msg);
+      });
+
+      socket?.on("close", (msg) => {
+        log("closed", msg);
+      });
+
+      socket?.on("connection.update", (m) => {
         let { data } = JSON.parse(m);
 
         if (data?.qr) {
@@ -43,7 +74,7 @@ const WhatsappQR = (props) => {
         }
       });
     }
-  }, [ws, filename]);
+  }, [loadWS, isConnected, setConnected, socket, filename]);
 
   const handleWALogout = (e) => {
     fetch("http://localhost:3000/api/ws?logout=1");

@@ -162,6 +162,9 @@ export default async function handler(req, res) {
         res.status(200).json({ error: "Action Undefined" });
         break;
   }
+
+  //set request timeout after 20 seconds
+  //setTimeout(()=> res.send(), 1000 * 20);
 }
 /*
 const data = {};

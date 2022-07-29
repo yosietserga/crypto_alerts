@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps, nonce, csp }) {
         <ThemeProvider>
           <StoreProvider>
             <WsProvider>
-              <Component {...pageProps} />
+            <Component {...pageProps} />
             </WsProvider>
           </StoreProvider>
         </ThemeProvider>

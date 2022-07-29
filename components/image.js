@@ -6,10 +6,10 @@ const myLoader = ({ src, width, quality }) => {
   return `http://localhost:3000${public_path}${src}?w=${width}&q=${quality || 75}`;
 };
 
-export default function Img({ s, a, c, w }) {
+export default function Img({ s, a, c, w, h }) {
   c = c ?? "";
-
-
+  //const layout = !w && !h ? "fill" : "responsive";
+  const layout = "fill";
 
   return (
     <>
@@ -17,9 +17,8 @@ export default function Img({ s, a, c, w }) {
         loader={myLoader}
         className={"ui-image" + (c ? " " : "") + c}
         src={s}
-        layout="fill"
+        layout={layout}
         alt={a ?? ""}
-        width={w ?? ""}
       />
     </>
   );

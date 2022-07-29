@@ -1,5 +1,14 @@
+import { useContext, useCallback, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { Container, Row, Col } from "reactstrap";
+import { empty, log } from "../utils/common";
+import { StoreContext } from "../context/store";
+import {
+  initSocketStream,
+  connectSocketStreams,
+  disconnectSocketStreams,
+  getSocket,
+} from "../libs/services/binance";
 
 const Li = (props) => (
   <Row>
@@ -13,35 +22,45 @@ const Li = (props) => (
     >
       <strong>{`${new BigNumber(props.percentChange).toFormat(2, 1)}%`}</strong>
     </Col>
-    <Col sm={2}>{new BigNumber(props.high).toFormat(null, 1)}</Col>
-    <Col sm={2}>{new BigNumber(props.low).toFormat(null, 1)}</Col>
-    <Col sm={2}>{new BigNumber(props.quoteVolume).toFormat(null, 1)}</Col>
+    <Col sm={2}>
+      {new BigNumber(props.high).toFormat(null, 1)} / 
+      {new BigNumber(props.low).toFormat(null, 1)}</Col>
+    <Col sm={2}>{new BigNumber(props.quoteVolume).toFormat(2, 1)}</Col>
   </Row>
 );
 
-const DataTable = (props) => {
-  let rows = [];
-  let tickerArray = Object.values(props.ticker).filter(item => item.symbol.endsWith("USDT"));
-  let numRows = tickerArray.length;
+const DataTable = () => {
+  const [rows, setRows] = useState([]);
+  const store = useContext(StoreContext);
+  
+  initSocketStream(store);
 
-  for (var i = 0; i < numRows; i++) {
-    //if (props.filter.includes(tickerArray[i].symbol)) {
-      rows.push(<Li {...tickerArray[i]} key={tickerArray[i].symbol} />);
-    //}
-  }
+  useEffect(() => {
+    connectSocketStreams(["!ticker@arr"]);
+
+    store.on("UPDATE_MARKET_PAIRS", (data) => {
+      setRows(
+        Object.values(data)
+          .filter((item) => item?.symbol?.endsWith("USDT"))
+          .map((i) => {
+            return <Li {...i} key={i?.symbol} />;
+          })
+      );
+    });
+  }, [store, setRows]);
+  
   return (
     <>
-      <Container className="table">
+        <Container className="table">
           <Row>
             <Col sm={2}>Pair</Col>
             <Col sm={2}>Last Price</Col>
             <Col sm={2}>24h Change</Col>
-            <Col sm={2}>24h High</Col>
-            <Col sm={2}>24h Low</Col>
+            <Col sm={2}>24h High/Low</Col>
             <Col sm={2}>24h Volume</Col>
           </Row>
-        {rows}
-      </Container>
+          {rows}
+        </Container>
     </>
   );
 };

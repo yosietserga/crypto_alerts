@@ -1,38 +1,13 @@
-import React, { useState } from "react";
 import AdminContainer from "./layout/container";
 import DataTable from "../../components/datatableMarketpairs";
 import CryptoCard from "../../components/cardMarketpair";
 import { Row } from "reactstrap";
-import { StoreContext } from "../../context/store";
-import { WsContext } from "../../context/ws";
-import { isset, empty, delay } from "../../utils/common";
-import {
-  initSocketStream,
-  connectSocketStreams,
-} from "../../libs/services/binance";
+//import { WsContext } from "../../context/ws";
+//import { isset, empty, delay } from "../../utils/common";
 
 let isLoaded;
 
 export default function Stores() {
-  const [market_pairs, setMarketPairs] = useState({});
-
-  const store = React.useContext(StoreContext);
-  const ws = React.useContext(WsContext);
-
-  store.on("UPDATE_MARKET_PAIRS", (data) => {
-    try {
-      setMarketPairs(data);
-    } catch(err) {
-      console.log(err);
-    }
-  });
-
-  initSocketStream(store);
-
-  React.useEffect(() => {
-    connectSocketStreams(["!ticker@arr"]);
-  }, []);
-
   return (
     <AdminContainer>
       <h1>Market Pairs</h1>
@@ -44,7 +19,7 @@ export default function Stores() {
         />
       </Row>
       <Row>
-        {market_pairs ? <DataTable ticker={market_pairs} /> : "nothing"}
+        <DataTable />
       </Row>
     </AdminContainer>
   );

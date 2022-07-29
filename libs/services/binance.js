@@ -1,11 +1,17 @@
-import {isset, empty } from "../../utils/common";
- const ws = {};
-const __data = {}; 
+import io from "socket.io-client";
+import { isset, empty, log } from "../../utils/common";
+
+const ws = {};
+const __data = {};
 
 export function initSocketStream(store) {
   if (typeof store !== "undefined") {
     __data.store = store;
   }
+}
+
+export function getSocket() {
+  return __data.store.get("binanceWS");
 }
 
 const getTick = (data) => {
@@ -31,13 +37,13 @@ const getTick = (data) => {
     L: "lastTradeId",
     n: "numTrades",
   };
-       
-  Object.keys(data).map(i => {
+
+  Object.keys(data).map((i) => {
     __data[i.length === 1 ? indexes[i] : i] = data[i];
   });
 
   return __data;
-}
+};
 
 export function getTickerBySymbol(data) {
   if (!isset(__data?.ticker)) __data.ticker = {};
@@ -51,7 +57,7 @@ export function getTickerBySymbol(data) {
     });
   } else if (typeof data.symbol !== "undefined") {
     let symbol = data.symbol || data.s;
-    
+
     if (!isset(__data.ticker[symbol])) __data.ticker[symbol] = {};
 
     __data.ticker[symbol] = getTick(data);
@@ -61,18 +67,29 @@ export function getTickerBySymbol(data) {
 }
 
 export function connectSocketStreams(streams) {
-  streams = (!empty(streams) && Array.isArray(streams)) ? streams.join("/") : streams;
-  
+  streams =
+    !empty(streams) && Array.isArray(streams) ? streams.join("/") : streams;
+
   if (empty(streams)) return false;
 
   let connection = btoa(streams);
 
+  ws[connection] = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+  /*
   const binanceWS = __data.store.get("binanceWS");
   ws[connection] =
     binanceWS[connection] ??
     new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
-
   __data.store.set("binanceWS", ws);
+  */
+
+  ws[connection].onopen = (evt) => {
+    log("ws opened", evt);
+  };
+
+  ws[connection].onclose = (evt) => {
+    log("ws closed", evt);
+  };
 
   ws[connection].onmessage = (evt) => {
     let ticker = getTickerBySymbol(JSON.parse(evt.data).data);
@@ -80,9 +97,11 @@ export function connectSocketStreams(streams) {
   };
 
   ws[connection].onerror = (evt) => {
-    console.error(evt);
-    disconnectSocketStreams().then(()=>{
-      connectSocketStreams("USDT");
+    log(evt);
+
+    disconnectSocketStreams().then(() => {
+      //__data.store.set("binanceWS", null);
+      connectSocketStreams(streams);
     });
   };
 }
