@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import AdminContainer from "../layout/container";
 import NextBreadcrumbs from "../../../components/ui/breadcrumbs";
@@ -6,11 +6,9 @@ import UIModal from "../../../components/ui/modal";
 import { Container, Row, Col } from "reactstrap";
 import actions from "../../../src/whatsapps/fragments/form";
 import WhatsappQR from "../../../src/whatsapps/fragments/qr";
-import { mt_rand, generateRandomString, doUntil } from "../../../utils/common";
-import { getProperties, findProperties } from "../../../libs/services/properties";
+import { mt_rand, generateRandomString, hash } from "../../../utils/common";
 
 const componentTitle = "WhatsApp Account";
-const OBJECT_TYPE = "whatsapp_account";
 
 export default function WhatsAppAccounts(props) {
   const router = useRouter();
@@ -21,7 +19,6 @@ export default function WhatsAppAccounts(props) {
 
   const [ref, setRef] = useState(actions.getVar(props, "ref", ""));
   const [storeId, setStoreId] = useState(actions.getVar(props, "storeId", ""));
-  const [objectId, setObjectId] = useState(actions.getVar(props, "id", 0));
   const [status, setStatus] = useState(actions.getVar(props, "status", 0));
 
 
@@ -30,55 +27,13 @@ export default function WhatsAppAccounts(props) {
   const [modalContent, setModalContent] = useState("");
   const toggle = () => setModal(!modal);
 
-  const [filename, setFilename] = useState("");
-  const [fileChecked, setFileChecked] = useState(false);
-
-  const getFilename = useCallback(async () => {
-    let f;
-    if (objectId){
-      const res = await getProperties({
-        objectId,
-        objectType: OBJECT_TYPE,
-        group: "data",
-        key: "session_filename",
-      });
-      console.log(res);
-      f = res?.value ?? generateRandomString(mt_rand(10, 15));
-    } else {
-      f = generateRandomString(mt_rand(10, 15));
-    }
-
-    if (props.action === "create") {
-      doUntil(async () => {
-        const exists = await findProperties({
-          objectType: OBJECT_TYPE,
-          group: "data",
-          key: "session_filename",
-          value: JSON.stringify(f),
-        });
-
-        setFileChecked(exists.length === 0);
-      }, fileChecked);
-
-      if (fileChecked) {
-        setFilename(f);
-      }
-    } else {
-      setFilename(f);
-    }
-  }, [setFilename, objectId, fileChecked, setFileChecked, props]);
-  
-  useEffect(()=>{
-    getFilename();
-  }, [getFilename]);
-
-  console.log({filename});
+  console.log(props.languages);
 
   const __props = {
     ...props,
 
     data: props?.data ?? null,
-    filename, 
+
     ref,
     status,
     storeId,
@@ -144,7 +99,7 @@ export default function WhatsAppAccounts(props) {
           <Row>
             <Col sm={6}>{children(props)}</Col>
             <Col sm={6}>
-              <WhatsappQR filename={props?.filename} />
+              <WhatsappQR filename={props.filename} />
             </Col>
           </Row>
         </Container>
@@ -200,6 +155,7 @@ export async function getServerSideProps({ params }) {
     }
 
     if (action == "update" && !isNaN(parseInt(id))) {
+      console.log("/api/posts/" + parseInt(id));
       let r = await fetch(baseurl + "/api/posts/" + parseInt(id), {
         method: "GET",
         headers: {
@@ -211,8 +167,12 @@ export async function getServerSideProps({ params }) {
       }
     }
 
+    //TODO: get the filename of the whatsapp session for this post or generate it if does not exists 
+    const filename = generateRandomString(mt_rand());
+
     return {
       props: {
+        filename,
         action,
         data,
         categories,

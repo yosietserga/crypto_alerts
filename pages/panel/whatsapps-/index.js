@@ -7,7 +7,6 @@ import LoadingIcon from "../../../components/ui/icons/loading";
 import UIModal from "../../../components/ui/modal";
 import { Row, Table, Button } from "reactstrap";
 import modelPosts from "../../../src/posts/models/index";
-import { deleteProperty } from "../../../libs/services/properties";
 
 const POST_TYPE = "whatsapp_account";
 
@@ -68,18 +67,6 @@ export default function WhatsAppAccounts() {
 
     //workflow success or fail
     if (res.status < 300) {
-      //TODO:delete all properties and related objects through a proxy function 
-      //TODO:refresh list of posts maintaining filters and sorting options 
-      
-      const fData = {};
-      fData.objectId = parseInt(uuid);
-      fData.objectType = POST_TYPE;
-      fData.group = "data";
-
-      deleteProperty(null, fData);
-      
-      setLoaded(false);
-
       setModalContent(<CheckIcon />);
       refreshData();
       setTimeout(() => {
@@ -90,7 +77,6 @@ export default function WhatsAppAccounts() {
     }
     setModal(true);
   };
-
   if (typeof error == "undefined") {
     if (data.length > 0) {
       Records = data.map((item) => {
