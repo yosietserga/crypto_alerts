@@ -127,7 +127,7 @@ export default function CryptoAlerts() {
 
   return (
     <AdminContainer>
-      <h1>Posts</h1>
+      <h1>Alertas</h1>
 
       <UIModal
         props={{
@@ -143,7 +143,7 @@ export default function CryptoAlerts() {
       <Row>
         <Link href="/panel/alerts/create" passHref={true}>
           <Button className="btn btn-default" color="primary">
-            Create Post
+            Crear Alerta
           </Button>
         </Link>
       </Row>

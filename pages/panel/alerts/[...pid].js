@@ -15,6 +15,10 @@ export default function CryptoAlerts(props) {
   const [ref, setRef] = useState(actions.getVar(props, "ref", ""));
   const [storeId, setStoreId] = useState(actions.getVar(props, "storeId", ""));
   const [status, setStatus] = useState(actions.getVar(props, "status", 0));
+  const [symbol, setSymbol] = useState(actions.getVar(props, "symbol", ""));
+
+  //UI logic and Post properties
+  const [alertType, setAlertType] = useState(actions.getVar(props, "alertType", ""));
 
 
   //modal controls
@@ -22,20 +26,24 @@ export default function CryptoAlerts(props) {
   const [modalContent, setModalContent] = useState("");
   const toggle = () => setModal(!modal);
 
-  console.log(props.languages);
-
   const __props = {
     ...props,
 
     data: props?.data ?? null,
 
     ref,
+    symbol,
     status,
     storeId,
 
     setRef,
+    setSymbol,
     setStoreId,
     setStatus,
+
+    //UI logic and properties
+    alertType,
+    setAlertType,
 
     flag,
     setFlag,
@@ -51,24 +59,24 @@ export default function CryptoAlerts(props) {
     case "create":
       props = {
         ...__props,
-        title: "Create Post",
+        title: "Create Alert",
       };
       break;
     case "update":
       props = {
         ...__props,
-        title: "Edit Post",
+        title: "Edit Alert",
         breadcrumbs: [
           {
             text: "Dashboard",
             href: "dashboard",
           },
           {
-            text: "Posts",
+            text: "Alerts",
             href: "posts",
           },
           {
-            text: "Edit Post",
+            text: "Edit Alert",
             href: null,
           },
         ],
@@ -125,6 +133,22 @@ export async function getServerSideProps({ params }) {
     let persons = await r_persons.json();
     if (persons.length === 0) persons = [];
 
+    //get all indicators
+    const r_indicators = await fetch(baseurl + "/api/indicators");
+    let indicators = await r_indicators.json();
+    if (indicators.length === 0) indicators = [];
+    else {
+      let sorted = {};
+      for (let i in indicators) {
+        Object.values(indicators)
+          .sort((a, b) => a.full_name.localeCompare(b.full_name))
+          .map((item) => {
+            sorted[item.name] = item;
+          });
+      }
+      indicators = sorted;
+    }
+
     //get all stores
     const r_stores = await fetch(baseurl + "/api/stores");
     let stores = await r_stores.json();
@@ -157,6 +181,7 @@ export async function getServerSideProps({ params }) {
       props: {
         action,
         data,
+        indicators,
         categories,
         languages,
         persons,
@@ -170,6 +195,7 @@ export async function getServerSideProps({ params }) {
       props: {
         action,
         data: [],
+        indicators: [],
         categories: [],
         languages: [],
         persons: [],

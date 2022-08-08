@@ -6,9 +6,9 @@ const secret = "b7352d2424bb2072655a519547f5a9df";
 export const COOKIE_PATH = hash("le_SPA_");
 export const hashCookies = true;
 
-export function mt_rand() {
-  const min = 5;
-  const max = 50;
+export function mt_rand(mi, ma) {
+  const min = mi??5;
+  const max = ma??50;
   return parseInt(Math.floor(Math.random() * (max - min) + min));
 }
 
@@ -213,6 +213,21 @@ export function getVar(props, k, defaultValue) {
     ? props.data[k]
     : defaultValue ?? "";
 };
+
+let __i = null;
+export function doUntil(fn, stop, seconds) {
+  if (typeof fn !== "function") return false;
+  if (isNaN(parseInt(seconds))) seconds = 1;
+
+  if (stop && __i) {
+    clearInterval(__i);
+    __i = null;
+  }
+
+  if (!__i && !stop) {
+    __i = setInterval(fn(__i), 1000 * seconds);
+  }
+}
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

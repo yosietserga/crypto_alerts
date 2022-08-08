@@ -295,7 +295,8 @@ th {
 }
 
 label {
-    display: inline-block;
+    display: inline-flex;
+    width: 30%;
     margin-bottom: .5rem
 }
 
@@ -324,7 +325,9 @@ button,select {
 }
 
 select {
-    word-wrap: normal
+    word-wrap: normal;
+    display: inline-flex;
+    width: 70%;
 }
 
 [type=button],[type=reset],[type=submit],button {
@@ -2349,8 +2352,8 @@ pre code {
 }
 
 .form-control {
-    display: block;
-    width: 100%;
+    display: inline-flex;
+    width: 70%;
     height: calc(1.5em + .75rem + 2px);
     padding: .375rem .75rem;
     font-size: 1rem;

@@ -39,6 +39,7 @@ export default function InputProperty(props) {
     Promise.all([res]).then((property) => {console.log(property);
       setValue(property[0].value);
       setID(property[0].id);
+      handler(property[0].value, fieldName);
     });
   }, [setValue, objectId, objectType, group, __key]);
 
@@ -90,7 +91,7 @@ export default function InputProperty(props) {
 
   return (
     <FormGroup>
-      <Label for={fieldName}>{label}</Label>
+      {!empty(label) && <Label for={fieldName}>{label}</Label>}
       <Input
         type="text"
         name={fieldName}

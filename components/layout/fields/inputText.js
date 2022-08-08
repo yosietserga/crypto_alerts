@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { StoreContext } from "../../../context/store";
+import { empty } from "../../../utils/common";
 import {
   FormGroup,
   Label,
@@ -26,7 +27,7 @@ export default function InputText(props) {
 
   return (
     <FormGroup>
-      <Label for={fieldName}>{label}</Label>
+      {!empty(label) && <Label for={fieldName}>{label}</Label>}
       <Input
         type="text"
         name={fieldName}
