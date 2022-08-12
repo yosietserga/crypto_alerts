@@ -89,7 +89,7 @@ const CriteriaRow = (props) => {
   };
 
   const saveCriteria = (c) => {
-    console.log(c);
+    //TODO: emit store events when validation fails and why 
     if (
       empty(c.tempo) ||
       empty(c.type) ||
@@ -254,93 +254,117 @@ const CriteriaRow = (props) => {
         )}
 
         {showIndicatorForm && (
-            <Col sm={12}>
-          
-          <InputSelect
-            handler={handler}
-            value={criteria.indicator}
-            options={
-              !empty(indicators)
-                ? Object.values(indicators).map((item) => {
-                    return {
-                      label:
-                        item.full_name + " ( " + item.name.toUpperCase() + " )",
-                      key: item.name,
-                      value: item.name,
-                    };
-                  })
-                : []
-            }
-            form={OBJECT_TYPE}
-            label=""
-            fieldName="indicator"
-          />
+          <Col sm={12}>
+            <InputSelect
+              handler={handler}
+              value={criteria.indicator}
+              options={
+                !empty(indicators)
+                  ? Object.values(indicators).map((item) => {
+                      return {
+                        label:
+                          item.full_name +
+                          " ( " +
+                          item.name.toUpperCase() +
+                          " )",
+                        key: item.name,
+                        value: item.name,
+                      };
+                    })
+                  : []
+              }
+              form={OBJECT_TYPE}
+              label=""
+              fieldName="indicator"
+            />
           </Col>
         )}
         {selectedIndicator && (
           <>
             <Col sm={12}>
-
-            <InputSelect
-              handler={handler}
-              value={criteria.group}
-              options={[
-                {
-                  label: "INPUTS",
-                  key: "inputs",
-                  value: "inputs",
-                },
-                {
-                  label: "OUTPUTS",
-                  key: "outputs",
-                  value: "outputs",
-                },
-              ]}
-              form={OBJECT_TYPE}
-              label=""
-              fieldName="group"
-            />
+              <InputSelect
+                handler={handler}
+                value={criteria.group}
+                options={[
+                  {
+                    label: "INPUTS",
+                    key: "inputs",
+                    value: "inputs",
+                  },
+                  {
+                    label: "OPTIONS",
+                    key: "options",
+                    value: "options",
+                  },
+                  {
+                    label: "OUTPUTS",
+                    key: "outputs",
+                    value: "outputs",
+                  },
+                ]}
+                form={OBJECT_TYPE}
+                label=""
+                fieldName="group"
+              />
             </Col>
 
             {criteria.group === "inputs" && (
-            <Col sm={12}>
+              <Col sm={12}>
+                <InputSelect
+                  handler={handler}
+                  value={criteria.option}
+                  options={selectedIndicator?.input_names?.map((item) => {
+                    const cleaned = `${item}`.replace(/[^A-Za-z\d\s]/gi, "");
+                    return {
+                      label: ucfirst(item.replace("_", " ")),
+                      key: `${cleaned}`,
+                      value: `${cleaned}`,
+                    };
+                  })}
+                  form={OBJECT_TYPE}
+                  label=""
+                  fieldName="option"
+                />
+              </Col>
+            )}
 
-              <InputSelect
-                handler={handler}
-                value={criteria.option}
-                options={selectedIndicator?.option_names?.map((item) => {
-                  const cleaned = `${item}`.replace(/[^A-Za-z\d\s]/gi, "");
-                  return {
-                    label: ucfirst(item.replace("_", " ")),
-                    key: `${cleaned}`,
-                    value: `${cleaned}`,
-                  };
-                })}
-                form={OBJECT_TYPE}
-                label=""
-                fieldName="option"
-              />
+            {criteria.group === "options" && (
+              <Col sm={12}>
+                <InputSelect
+                  handler={handler}
+                  value={criteria.option}
+                  options={selectedIndicator?.option_names?.map((item) => {
+                    const cleaned = `${item}`.replace(/[^A-Za-z\d\s]/gi, "");
+                    return {
+                      label: ucfirst(item.replace("_", " ")),
+                      key: `${cleaned}`,
+                      value: `${cleaned}`,
+                    };
+                  })}
+                  form={OBJECT_TYPE}
+                  label=""
+                  fieldName="option"
+                />
               </Col>
             )}
 
             {criteria.group === "outputs" && (
-            <Col sm={12}>
-
-              <InputSelect
-                handler={handler}
-                value={criteria.option}
-                options={selectedIndicator?.output_names?.map((item) => {
-                  const cleaned = `${item}`.replace(/[^A-Za-z\d\s]/gi, "");
-                  return {
-                    label: ucfirst(item.replace("_", " ")),
-                    key: `${cleaned}`,
-                    value: `${cleaned}`,
-                  };
-                })}
-                form={OBJECT_TYPE}
-                label=""
-                fieldName="option"
-              />
+              <Col sm={12}>
+                <InputSelect
+                  handler={handler}
+                  value={criteria.option}
+                  options={selectedIndicator?.output_names?.map((item) => {
+                    const cleaned = `${item}`.replace(/[^A-Za-z\d\s]/gi, "");
+                    return {
+                      label: ucfirst(item.replace("_", " ")),
+                      key: `${cleaned}`,
+                      value: `${cleaned}`,
+                    };
+                  })}
+                  form={OBJECT_TYPE}
+                  label=""
+                  fieldName="option"
+                />
               </Col>
             )}
 
@@ -350,16 +374,15 @@ const CriteriaRow = (props) => {
 
             {!empty(criteria.option) && (
               <>
-            <Col sm={12}>
-
-                <InputText
-                  handler={handler}
-                  value={criteria.trigger}
-                  form={OBJECT_TYPE}
-                  label=""
-                  fieldName="trigger"
-                  placeholder="Value of Trigger"
-                />
+                <Col sm={12}>
+                  <InputText
+                    handler={handler}
+                    value={criteria.trigger}
+                    form={OBJECT_TYPE}
+                    label=""
+                    fieldName="trigger"
+                    placeholder="Value of Trigger"
+                  />
                 </Col>
               </>
             )}
@@ -372,7 +395,7 @@ const CriteriaRow = (props) => {
             <Button
               variant="danger"
               onClick={(e) => {
-                removeCriteria(k, data?.value?.id??propertyId);
+                removeCriteria(k, data?.value?.id ?? propertyId);
               }}
             >
               DELETE

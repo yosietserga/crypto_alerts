@@ -5,14 +5,17 @@ import AdminContainer from "../layout/container";
 import CheckIcon from "../../../components/ui/icons/check";
 import LoadingIcon from "../../../components/ui/icons/loading";
 import UIModal from "../../../components/ui/modal";
+import { StoreContext } from "../../../context/store";
 import { Row, Table, Button } from "reactstrap";
 import modelPosts from "../../../src/posts/models/index";
+import PostsEvents from "../../../src/cryptoalerts/listeners/index";
 
 const POST_TYPE = "cryptoalert";
 
 export default function CryptoAlerts() {
   const router = useRouter();
-
+  const store = React.useContext(StoreContext);
+  PostsEvents.listen(store);
   let Records = [];
 
   //modal controls
@@ -52,6 +55,7 @@ export default function CryptoAlerts() {
     setModal(true);
     setUUID(id);
   };
+  
   const handleDelete = async (d) => {
     console.log(d);
 
@@ -68,12 +72,16 @@ export default function CryptoAlerts() {
     });
 
     //workflow success or fail
+    if (res?.id) {
+    }
+
     if (res.status < 300) {
       setModalContent(<CheckIcon />);
       refreshData();
       setTimeout(() => {
         toggle();
       }, 1200);
+      store.emit("post:delete", await res.json());
     } else {
       setModalContent("No se pudo eliminar, por favor intente de nuevo");
     }
