@@ -7,8 +7,8 @@ const ThemeSwitcher = () => {
 
   return (
     <>
-      {theme=="dark" && <Button onClick={() => setTheme("light")}>Light Theme</Button>}
-      {theme=="light" && <Button onClick={() => setTheme("dark")}>Dark Theme</Button>}
+      {theme=="dark" && <Button onClick={() => setTheme("light")}><i className="fas fa-sun"></i> Light Theme</Button>}
+      {theme=="light" && <Button onClick={() => setTheme("dark")}><i className="fas fa-moon"></i> Dark Theme</Button>}
     </>
   );
 };

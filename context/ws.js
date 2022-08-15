@@ -22,9 +22,9 @@ const WsProvider = ({ children }) => {
   };
 
   React.useEffect(() => {
-    //ws.socket = io("/", config);
-    //ws.whatsapp = io("/whatsapp", config);
-    //ws.binance = io("/binance", config);
+    ws.socket = io("/", config);
+    ws.whatsapp = io("/whatsapp", config);
+    ws.binance = io("/binance", config);
 
     return () => {
       Object.keys(ws).map(i => {

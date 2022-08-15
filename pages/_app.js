@@ -1,6 +1,8 @@
 import HTMLHead from "../components/layout/partials/head.js";
 import { StoreProvider } from "../context/store";
 import { WsProvider } from "../context/ws";
+import "../styles/globals.css";
+import "tailwindcss/tailwind.css";
 import { ThemeProvider } from "next-themes";
 import React from "react";
 

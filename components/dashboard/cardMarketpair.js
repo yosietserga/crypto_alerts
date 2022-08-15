@@ -11,7 +11,7 @@ import {
   CardBody,
   CardText,
 } from "reactstrap";
-import { log, ucfirst, empty, isset } from "../utils/common";
+import { log, ucfirst, empty, isset } from "../../utils/common";
 import moment from  "moment";
 
 let memo = [];
@@ -85,38 +85,40 @@ const CryptoCard = (props) => {
   
   return (
     <>
-      <Col sm={6}>
-        <Card>
-          <CardBody>
-            <CardTitle tag="h5">{symbol.toUpperCase()}</CardTitle>
-            <div>
-              <h2>{parseFloat(lastPrice).toFix(2)}</h2>
-              {!empty(arrayOfIndicators) && arrayOfIndicators}
+      <Card>
+        <CardBody>
+          <Col sm={12}>
+            <h1>{symbol.toUpperCase()}</h1>
+            <h2>{parseFloat(lastPrice).toFix(2)}</h2>
+          </Col>
 
-              {!empty(__data) && (
-                <Sparklines data={sampleData} height={40} limit={500}>
-                  <SparklinesLine
-                    style={{
-                      stroke: "#8ed53f",
-                      strokeWidth: "1",
-                      fill: "none",
-                    }}
-                  />
-                  <SparklinesSpots />
-                </Sparklines>
-              )}
+          <Col sm={12}>
+            {!empty(__data) && (
+              <Sparklines data={sampleData} height={40} limit={500}>
+                <SparklinesLine
+                  style={{
+                    stroke: "#8ed53f",
+                    strokeWidth: "1",
+                    fill: "none",
+                  }}
+                />
+                <SparklinesSpots />
+              </Sparklines>
+            )}
 
-              {!empty(__data) && (
-                <p>
-                  <small>
-                    last update {moment().startOf("minute").fromNow()}
-                  </small>
-                </p>
-              )}
-            </div>
-          </CardBody>
-        </Card>
-      </Col>
+            {!empty(__data) && (
+              <p>
+                <small>
+                  last update {moment().startOf("minute").fromNow()}
+                </small>
+              </p>
+            )}
+          </Col>
+          <Col sm={12}>
+            <p>{!empty(arrayOfIndicators) && arrayOfIndicators}</p>
+          </Col>
+        </CardBody>
+      </Card>
     </>
   );
 };

@@ -57,7 +57,7 @@ function AdminContainer(mainProps) {
       <Head>
         <title>Admin | CryptoAlerts</title>
 
-        <link rel="icon" href='/favicon.ico' />
+        <link rel="icon" href="/favicon.ico" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -92,10 +92,8 @@ function AdminContainer(mainProps) {
       />
       <Container fluid className="wrapper">
         <Row>
-          <Col className="wrapper-left">
-            <SideBar session={session} />
-          </Col>
-          <Col className="wrapper-content">{children}</Col>
+          <SideBar />
+          <Col>{children}</Col>
         </Row>
       </Container>
     </>

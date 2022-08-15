@@ -1,5 +1,7 @@
 const fs = require("fs");
+const { Server } = require("socket.io");
 const { createServer } = require("http");
+const { parse } = require("url");
 const next = require("next");
 const Binance = require("node-binance-api");
 const tulind = require("tulind");
@@ -9,7 +11,7 @@ const managerWorker = require("./workers/manager");
 const { isset, empty, version_compare, log } = require("./utils/helpers");
 
 
-const runnit = async () => {
+const runnit = async (wss) => {
   const prisma = new PrismaClient();
   const binance = new Binance();
   //const { state, saveCreds } = await makeWASocket.useMultiFileAuthState("borrar");
@@ -209,12 +211,12 @@ const runnit = async () => {
                 opt.comparator
               );
             });
-            console.log("passed", passed.reduce((a, b) => {
-              return a && b;
-            }));
-            return passed.reduce((a, b) => {
+            const testsResult = passed.reduce((a, b) => {
               return a && b;
             });
+            console.log("testsResult", testsResult);
+            wss?.broadcast?.emit("cryptoalert", __index+":"+indicator+":"+testsResult);
+            return testsResult;
           } else {
             if (myData.get("debug")) console.log("ERROR:", err);
           }
@@ -232,15 +234,13 @@ const runnit = async () => {
   console.log("running...");
 };
 
-runnit();
-
-
 const hostname = process.env.HOSTNAME ?? "localhost";
 const port = process.env.PORT ?? 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 const baseUrl = process.env.BASE_URL ?? "http://localhost";
+const __debug = true;
 
 const getParamsFromURI = (uri) => {
   const url = new URL(uri, baseUrl);
@@ -248,16 +248,53 @@ const getParamsFromURI = (uri) => {
 };
 
 app.prepare().then(() => {
-  createServer((req, res) => {
+  let wss;
+  const server = createServer((req, res) => {
     let url = req.url;
     const query = getParamsFromURI(url);
 
-    if (url.includes("_next/image") && !!query?.url) {
-      url = query?.url
+    if (res.socket.server.io) {
+      if (__debug) console.log("Socket is already running");
+      wss = res.socket.server.io;
+    } else {
+      if (__debug) console.log("Socket is initializing");
+      wss = new Server(res.socket.server);
+      res.socket.server.io = wss;
+
+      wss.of("/").on("connection", (socket) => {
+        console.log("ws main channel connected");
+
+        if (__debug)
+          console.log("WebSocket client connected for all ", socket.id);
+      });
+
+      wss.of("/binance").on("connection", (socket) => {
+        console.log("ws binance channel connected");
+
+        runnit(socket);
+
+        if (__debug)
+          console.log("WebSocket client connected for binance ", socket.id);
+      });
+
+      wss.of("/whatsapp").on("connection", (socket) => {
+        try {
+          console.log("whatsapp server exclusive channel connected");
+          if (__debug)
+            console.log("WebSocket client connected for whatsapp ", socket.id);
+          //const s = startSock(socket, filename);
+        } catch (e) {
+          console.error("Websocket connection error:", e);
+        }
+      });
     }
-    
+
+    if (url.includes("_next/image") && !!query?.url) {
+      url = query?.url;
+    }
+
     if (url.includes("uploads/")) {
-      const __path = url.includes("public/") ? url : "/public/"+url;
+      const __path = url.includes("public/") ? url : "/public/" + url;
       fs.readFile(__dirname + __path, function (err, data) {
         if (err) {
           res.writeHead(404);
@@ -270,7 +307,21 @@ app.prepare().then(() => {
     } else {
       handle(req, res);
     }
-  }).listen(port, (err) => {
+  });
+  
+
+  /*
+  server.on("upgrade", function (req, socket, head) {
+    const { pathname } = parse(req.url, true);
+    console.log("webscoket upgrade", pathname);
+    if (!pathname.includes("_next/webpack-hmr")) {
+      wss.handleUpgrade(req, socket, head, function done(ws) {
+        wss.broadcast.emit("connection", ws, req);
+      });
+    }
+  });
+  */
+  server.listen(port, (err) => {
     if (err) {
       console.log(err);
       throw err;

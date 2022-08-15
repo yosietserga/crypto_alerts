@@ -1,9 +1,9 @@
-import React, { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo, useContext } from "react";
 import {
   Row, Col,
   Collapse,
   Navbar,
-  NavbarToggler,
+  Button,
   NavbarBrand,
   Nav,
   NavItem,
@@ -14,19 +14,30 @@ import {
   DropdownItem,
   NavbarText,
 } from "reactstrap";
+import { StoreContext } from "../../../context/store";
 import Img from "../../../components/image";
 
 function NavBar(props) {
   const { session } = props;
+  const [toggled, setToggled] = useState();
+  const store = useContext(StoreContext);
+
+  const handleToggle = () => {
+    store.emit("sidebar:toggle", !toggled);
+    setToggled(!toggled);
+  }
+  
   return (
     <div>
-      <Navbar color="dark" dark expand="sm" fixed="top">
+      <Navbar color="dark" dark expand="sm" fixed="top" className="shadow">
         <NavbarBrand href="/panel">
-          <Col sm={3}>
+          <Col sm={3} className="h-[42px]">
             <Img s="logo/logo.png" a="Logo" c="admin-logo" w={44} h={58} />
           </Col>
         </NavbarBrand>
-        <NavbarToggler onClick={props.toggle} color="dark" />
+        <Button onClick={handleToggle}>
+          <i className="fas fa-bars"></i>
+        </Button>
         <Collapse isOpen={props.isOpen} navbar>
           <Nav className="mr-auto" navbar>
             <NavItem>

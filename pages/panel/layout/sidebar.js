@@ -1,13 +1,20 @@
 import React from "react";
+import Link from "next/link";
 import {
-  ListGroup,
-  ListGroupItem,
-  Nav,
-  NavItem,
-  NavLink,
-  UncontrolledCollapse,
-} from "reactstrap";
+  ProSidebar,
+  Menu,
+  MenuItem,
+  SubMenu,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarContent,
+} from "react-pro-sidebar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-solid-svg-icons";
 import ThemeSwitcher from "../../../components/ui/themeSwitcher";
+import { empty } from "../../../utils/common";
+import { StoreContext } from "../../../context/store";
+import "react-pro-sidebar/dist/css/styles.css";
 
 // Menus
 const MENUS = [
@@ -80,36 +87,127 @@ const MENUS = [
     href: "/panel/settings",
     label: "Settings",
     icon: "fas fa-user",
+    children: [
+      {
+        href: "/panel/settings",
+        label: "Settings",
+        icon: "fas fa-user",
+      },
+    ],
   },
 ];
 
 //TODO: load menu from DB 
 //TODO: check modules status before show it 
 function SideBar(props) {
-  const { activeLink, session } = props;
-  
+  const { activeLink } = props;
+  const store = React.useContext(StoreContext);
+
+  const [collapsed, setCollapsed] = React.useState();
+  const [toggled, setToggled] = React.useState();
+
+  store.on("sidebar:toggle", (t) => {
+    //setToggled(t);
+    setCollapsed(t);
+  });
+
   return (
     <>
-      <ThemeSwitcher />
-      <h4 className="headline">Menu</h4>
-      <div className="wrapper-list-group">
-        <ListGroup flush className="list-group-nav-left" tag="div">
+      <ProSidebar
+        collapsed={collapsed}
+        toggled={toggled}
+        breakPoint="md"
+        onToggle={setToggled}
+      >
+        <SidebarHeader>
+          <div className={`px-[5px] py-[10px]`}>
+            <ThemeSwitcher />
+          </div>
+        </SidebarHeader>
+
+        <SidebarContent>
           {MENUS.map((item, k) => {
             const isActive = activeLink === item.name ? true : false;
             return (
-              <ListGroupItem
-                key={`l${k}`}
-                active={isActive}
-                tag={item.as}
-                href={item.href}
-              >
-                {item.icon && <i className={item.icon}></i>} {item.label}
-              </ListGroupItem>
+              <>
+                <Menu iconShape="circle" key={JSON.stringify(item)}>
+                  {!empty(item?.children) && (
+                    <>
+                      <SubMenu
+                        icon={item?.icon ? <i className={item.icon}></i> : ""}
+                        sufix={item?.sufix ?? ""}
+                        prefix={item?.prefix ?? ""}
+                        title={item.label}
+                      >
+                        {item.children.map((subitem, k) => {
+                          return (
+                            <>
+                              <MenuItem key={k}>
+                                <Link href={subitem.href}>
+                                  <a>
+                                    {item?.icon ? (
+                                      <i className={item.icon}></i>
+                                    ) : (
+                                      ""
+                                    )}{" "}
+                                    {subitem.label}
+                                  </a>
+                                </Link>
+                              </MenuItem>
+                            </>
+                          );
+                        })}
+                      </SubMenu>
+                    </>
+                  )}
+                  {empty(item?.children) && (
+                    <MenuItem
+                      icon={item?.icon ? <i className={item.icon}></i> : ""}
+                      sufix={item?.sufix ?? ""}
+                      prefix={item?.prefix ?? ""}
+                    >
+                      {item?.href && (
+                        <Link href={item.href}>
+                          <a>{item.label}</a>
+                        </Link>
+                      )}
+                      {!item?.href && item.label}
+                    </MenuItem>
+                  )}
+                </Menu>
+              </>
             );
           })}
-        </ListGroup>
-      </div>
-       </>
+        </SidebarContent>
+
+        <SidebarFooter style={{ textAlign: "center" }}>
+          <div
+            className="sidebar-btn-wrapper"
+            style={{
+              padding: "20px 24px",
+            }}
+          >
+            <a
+              href="https://github.com/yosietserga/crypto_alerts"
+              target="_blank"
+              className="sidebar-btn"
+              rel="noopener noreferrer"
+            >
+              <FontAwesomeIcon icon={faGithub} />
+              <span
+                style={{
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                }}
+              >
+                {" View Source Code"}
+              </span>
+            </a>
+          </div>
+        </SidebarFooter>
+      </ProSidebar>
+    </>
   );
 }
 
