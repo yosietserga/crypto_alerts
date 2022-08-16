@@ -72,12 +72,12 @@ export default function Stores() {
             />
           </Col>
           <Col sm={6} className={`px-0`}>
-            {symbolSelected && (
+            {/*symbolSelected && (
               <TradingViewTabs
                 copyrightStyles={CopyrightStyles}
                 symbol={symbolSelected}
               />
-            )}
+            )*/}
             {!symbolSelected && (
               <div className={`mx-[15%] my-[50px]`}>
                 Debe seleccionar un par para mostrar las alertas

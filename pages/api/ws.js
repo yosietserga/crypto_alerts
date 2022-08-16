@@ -258,7 +258,9 @@ export default async function handler(req, res) {
     if (isset(params?.f) && !empty(params?.f)) {
       filenameStore = params.f;
       filename = params.f;
-      if (!isset(sessions[filename])) {sessions[filename] = {}}
+      if (!isset(sessions[filename])) {
+        sessions[filename] = {};
+      }
     }
 
     if (params?.logout) {
@@ -272,7 +274,7 @@ export default async function handler(req, res) {
       res.end();
       return false;
     }
-
+    /*
     if (res.socket.server.io) {
       if (__debug) console.log("Socket is already running");
       server = res.socket.server.io;
@@ -282,7 +284,6 @@ export default async function handler(req, res) {
       server.setMaxListeners(0);
       server.listen(res.socket.server);
       res.socket.server.io = server;
-
       server.of("/").on("connection", (socket) => {
         console.log("ws main channel connected");
         if (__debug) console.log("WebSocket client connected", socket.id);
@@ -298,6 +299,7 @@ export default async function handler(req, res) {
         }
       });
     }
+    */
 
     res.end();
   } catch (e) {

@@ -21,7 +21,8 @@ export default function TradingViewChart(props) {
           locale="en"
           timezone="America/New York"
           allow_symbol_change={false}
-          autosize={true}
+          height={400}
+          width="100%"
           hideSideToolbar={true}
           details={false}
           style={BarStyles.HEIKIN_ASHI}
@@ -35,7 +36,7 @@ export default function TradingViewChart(props) {
 
   return (
     <>
-          {chart}
+      {chart}
     </>
   );
 }

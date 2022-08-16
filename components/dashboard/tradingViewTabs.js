@@ -2,16 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Col, Button, TabPane, TabContent } from "reactstrap";
 import { MarketOverview } from "react-ts-tradingview-widgets";
+import { empty } from "../../utils/common";
 
-const CoinmarketCapApi = axios.create({
-  baseURL:"https://pro-api.coinmarketcap.com",
+const api = axios.create({
+  baseURL:"http://localhost:3000/api",
   method: "GET",
   headers:{
     "Content-Type": "application/json",
     Accept: "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Credentials": "true",
-    "X-CMC_PRO_API_KEY": "371522d7-073d-4b0f-a215-27d75cbecf69",
   },
 });
 
@@ -26,16 +26,19 @@ export default function TradingViewTabs(props) {
   //modal controls
   const [__view, setView] = useState(false);
   const loadAll = useCallback(async () => {
-    let info = {};
+    let alerts = [];
     try {
-      console.log(
-        await CoinmarketCapApi("/v2/cryptocurrency/info", {
-          params: {
-            symbol: symbol.replace("USDT", ""),
+      const res = await api("/posts", {
+        params: {
+          where: {
+            post_type: "cryptoalert",
+            ref: symbol,
           },
-        })
-      );
-    } catch(err) {
+        },
+      });
+      console.log(res);
+      alerts = res.data;
+    } catch (err) {
       console.log(err);
     }
 
@@ -67,10 +70,20 @@ export default function TradingViewTabs(props) {
         <Col sm={12} className={`px-0 min-h-[36rem]`}>
           <TabContent activeTab={activeTab}>
             <TabPane tabId="info" className={`min-h-[36rem]`}>
-              {JSON.stringify(info)}
+              info
             </TabPane>
             <TabPane tabId="alerts" className={`min-h-[36rem]`}>
-              alerts
+              {empty(alerts) && "No hay alertas para " + symbol}
+              {!empty(alerts) &&
+                alerts.map((post) => {
+                  return (
+                    <>
+                      <div key={post.uuid} className="alert alert-info">
+                        <h2>{post.ref}</h2>
+                      </div>
+                    </>
+                  );
+                })}
             </TabPane>
             <TabPane tabId="markets" className={`min-h-[36rem]`}>
               <MarketOverview

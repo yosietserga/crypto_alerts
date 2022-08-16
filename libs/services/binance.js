@@ -1,4 +1,3 @@
-import io from "socket.io-client";
 import { isset, empty, log } from "../../utils/common";
 
 const ws = {};
