@@ -12,7 +12,7 @@ app.prepare().then(() => {
   }).listen(port, (err) => {
     console.log(err);
     if (err) throw err;
-    console.log(`> Ready on http://localhost:${port}`);
+    console.log(`> Ready on http://51.77.211.245:${port}`);
   });
 });
 

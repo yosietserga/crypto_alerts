@@ -8,7 +8,7 @@ let isLoaded;
 let lastFilename;
 
 const PORT = process.env.PORT ?? 3000;
-const HOST = process.env.BASE_URL ?? "http://localhost";
+const HOST = process.env.BASE_URL ?? "http://51.77.211.245";
 const baseurl = HOST + ":" + PORT;
 
 const WhatsappQR = (props) => {
