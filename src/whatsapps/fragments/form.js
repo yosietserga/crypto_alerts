@@ -117,8 +117,9 @@ const actions = {
         },
         body: JSON.stringify(formData),
       }).then(resp => resp.json()).then(async resp => {
+        console.log(resp);
+        if (resp.id) {
           const fData = {};
-          fData
           fData.objectId = parseInt(resp.id);
           fData.objectType = OBJECT_TYPE;
           fData.group = "data";
@@ -127,6 +128,7 @@ const actions = {
           fData.value = props.filename;
           
           const result = await setProperty(null, fData);
+        }
       });
 
       //workflow success or fail

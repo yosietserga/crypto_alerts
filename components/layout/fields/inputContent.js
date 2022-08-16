@@ -50,8 +50,13 @@ export default function InputContent(props) {
     });
 
     Promise.all([res]).then((content) => {
-      setValue(content[0][fieldName]??"");
-      setID(content[0].id);
+      if (Array.isArray(content)) {
+        setValue(content[0][fieldName]??"");
+        setID(content[0].id);
+      } else {
+        setValue(content[fieldName] ?? "");
+        setID(content.id);
+      }
     });
   }, [setValue, setID, objectId, objectType, languageId, fieldName]);
 
@@ -126,9 +131,9 @@ export default function InputContent(props) {
           type="text"
           name={fieldName}
           id={fieldName + "_" + __id}
-          languageId={languageId}
-          objectId={objectId}
-          objectType={objectType}
+          languageid={`${languageId}`}
+          objectid={`${objectId}`}
+          objecttype={`${objectType}`}
           value={`${__value}`}
           onChange={handleField}
           placeholder={placeholder ?? ""}
@@ -140,9 +145,9 @@ export default function InputContent(props) {
           type="textarea"
           name={fieldName}
           id={fieldName + "_" + __id}
-          languageId={languageId}
-          objectId={objectId}
-          objectType={objectType}
+          languageid={`${languageId}`}
+          objectid={`${objectId}`}
+          objecttype={`${objectType}`}
           value={`${__value}`}
           onChange={handleField}
           placeholder={placeholder ?? ""}

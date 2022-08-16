@@ -18,6 +18,8 @@ const handle = app.getRequestHandler();
 const baseUrl = process.env.BASE_URL ?? "http://localhost";
 const __debug = true;
 
+global.baseUrl = baseUrl+":"+port;
+
 const getParamsFromURI = (uri) => {
   const url = new URL(uri, baseUrl);
   return url.searchParams;

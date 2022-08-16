@@ -44,7 +44,10 @@ module.exports = {
         source: "/api/(.*)",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "http://localhost:3000/" },
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "http://51.77.211.245:3000/",
+          },
           {
             key: "Access-Control-Allow-Methods",
             value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",

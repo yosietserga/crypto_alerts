@@ -129,8 +129,7 @@ function SideBar(props) {
           {MENUS.map((item, k) => {
             const isActive = activeLink === item.name ? true : false;
             return (
-              <>
-                <Menu iconShape="circle" key={JSON.stringify(item)}>
+                <Menu iconShape="circle" key={k+item.label}>
                   {!empty(item?.children) && (
                     <>
                       <SubMenu
@@ -139,10 +138,9 @@ function SideBar(props) {
                         prefix={item?.prefix ?? ""}
                         title={item.label}
                       >
-                        {item.children.map((subitem, k) => {
+                        {item.children.map((subitem, ke) => {
                           return (
-                            <>
-                              <MenuItem key={k}>
+                              <MenuItem key={ke+subitem.label}>
                                 <Link href={subitem.href}>
                                   <a>
                                     {item?.icon ? (
@@ -154,7 +152,6 @@ function SideBar(props) {
                                   </a>
                                 </Link>
                               </MenuItem>
-                            </>
                           );
                         })}
                       </SubMenu>
@@ -175,7 +172,6 @@ function SideBar(props) {
                     </MenuItem>
                   )}
                 </Menu>
-              </>
             );
           })}
         </SidebarContent>

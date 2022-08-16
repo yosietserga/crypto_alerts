@@ -1,6 +1,4 @@
 import Script from "next/script";
-import Link from "next/link";
-import Img from "../image";
 import { StoreContext } from "../../context/store";
 import React from "react";
 

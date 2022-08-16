@@ -36,6 +36,7 @@ export default function WhatsAppAccounts(props) {
   const getFilename = useCallback(async () => {
     let f;
     if (objectId){
+      console.log({objectId});
       const res = await getProperties({
         objectId,
         objectType: OBJECT_TYPE,

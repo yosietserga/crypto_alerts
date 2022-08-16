@@ -111,7 +111,8 @@ export async function getServerSideProps({ params }) {
 
   try {
     const PORT = process.env.PORT ?? 3000;
-    const baseurl = process.env.BASE_URL + ":" + PORT;
+    const HOST = process.env.BASE_URL ?? "http://localhost";
+    const baseurl = HOST + ":" + PORT;
 
     //get all profile groups
     const r_profilegroups = await fetch(baseurl + "/api/profilegroups");

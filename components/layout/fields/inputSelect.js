@@ -44,11 +44,9 @@ export default function InputSelect(props) {
         </option>
         {options.map((opt) => {
           return (
-            <>
-              <option key={opt.key} value={opt.value}>
-                {opt.label}
-              </option>
-            </>
+            <option key={opt.key} value={opt.value}>
+              {opt.label}
+            </option>
           );
         })}
       </Input>

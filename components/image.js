@@ -1,9 +1,12 @@
 import Image from 'next/image'
 
 const public_path = process.env.NEXT_PUBLIC_IMAGE_PATH;
+const PORT = process.env.PORT ?? 3000;
+const HOST = process.env.BASE_URL ?? "http://localhost";
+const baseurl = HOST + ":" + PORT;
 
 const myLoader = ({ src, width, quality }) => {
-  return `http://localhost:3000${public_path}${src}?w=${width}&q=${quality || 75}`;
+  return `${baseurl}/${public_path}${src}?w=${width}&q=${quality || 75}`;
 };
 
 export default function Img({ s, a, c, w, h }) {

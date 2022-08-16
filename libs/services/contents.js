@@ -4,7 +4,11 @@ export const getContents = async (data) => {
   const formData = {};
 
   if (!empty(data?.languageId)) formData.languageId = parseInt(data.languageId);
-  if (!empty(data?.objectId)) formData.objectId = parseInt(data.objectId);
+  if (!empty(data?.objectId) && !isNaN(parseInt(data.objectId))) {
+    formData.objectId = parseInt(data.objectId);
+  } else {
+    return false;
+  }
   if (!empty(data?.objectType)) formData.objectType = data.objectType;
 
   //get contents

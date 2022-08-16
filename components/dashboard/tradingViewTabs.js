@@ -4,8 +4,12 @@ import { Col, Button, TabPane, TabContent } from "reactstrap";
 import { MarketOverview } from "react-ts-tradingview-widgets";
 import { empty } from "../../utils/common";
 
+const PORT = process.env.PORT ?? 3000;
+const HOST = process.env.BASE_URL ?? "http://localhost";
+const baseurl = HOST + ":" + PORT;
+
 const api = axios.create({
-  baseURL:"http://localhost:3000/api",
+  baseURL:baseurl+"/api",
   method: "GET",
   headers:{
     "Content-Type": "application/json",

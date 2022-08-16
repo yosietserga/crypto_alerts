@@ -2,12 +2,13 @@ import React from "react";
 import io from "socket.io-client";
 
 const ws = {};
-
+const PORT = process.env.PORT ?? 3000;
+const HOST = process.env.BASE_URL ?? "http://localhost";
+const baseurl = HOST + ":" + PORT;
 const WsContext = React.createContext(null);
+
 const WsProvider = ({ children }) => {
-
-
-  fetch("http://localhost:3000/api/ws", {
+  fetch(baseurl+"/api/ws", {
     method: "GET",
     cache: "no-cache",
     credentials: "same-origin",

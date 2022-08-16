@@ -7,6 +7,10 @@ let i;
 let isLoaded;
 let lastFilename;
 
+const PORT = process.env.PORT ?? 3000;
+const HOST = process.env.BASE_URL ?? "http://localhost";
+const baseurl = HOST + ":" + PORT;
+
 const WhatsappQR = (props) => {
   const { filename } = props;
   const [qrImage, setQR] = useState();
@@ -14,7 +18,7 @@ const WhatsappQR = (props) => {
   const [isConnected, setConnected] = useState(true);
 
   if (!empty(filename)) {    
-    fetch("http://localhost:3000/api/ws?f="+ filename);
+    fetch(baseurl+"/api/ws?f="+ filename);
   }
 
   const loadWS = useCallback(async () => {
@@ -77,7 +81,7 @@ const WhatsappQR = (props) => {
   }, [loadWS, isConnected, setConnected, socket, filename]);
 
   const handleWALogout = (e) => {
-    fetch("http://localhost:3000/api/ws?logout=1");
+    fetch(baseurl + "/api/ws?logout=1");
   };
 
   if (!qrImage) {
