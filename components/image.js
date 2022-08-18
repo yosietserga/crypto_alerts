@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 const public_path = process.env.NEXT_PUBLIC_IMAGE_PATH ?? "/img/";
 const PORT = process.env.PORT ?? 3000;
-const HOST = process.env.BASE_URL ?? "http://51.77.211.245";
+const HOST = process.env.BASE_URL ?? "http://localhost";
 const baseurl = HOST + ":" + PORT;
 
 const myLoader = ({ src, width, quality }) => {

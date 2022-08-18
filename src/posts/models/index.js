@@ -27,6 +27,5 @@ export const getAll = async (data) => {
   return json;
 };
 
-export default {
-  getAll
-};
+const model = { getAll }
+export default model;

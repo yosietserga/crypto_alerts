@@ -15,7 +15,7 @@ const port = process.env.PORT ?? 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
-const baseUrl = process.env.BASE_URL ?? "http://51.77.211.245";
+const baseUrl = process.env.BASE_URL ?? "http://localhost";
 const __debug = true;
 
 global.baseUrl = baseUrl+":"+port;
@@ -103,6 +103,6 @@ app.prepare().then(() => {
       console.log(err);
       throw err;
     }
-    console.log(`> Ready on http://51.77.211.245:${port}`);
+    console.log(`> Ready on http://localhost:${port}`);
   });
 });

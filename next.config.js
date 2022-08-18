@@ -46,7 +46,7 @@ module.exports = {
           { key: "Access-Control-Allow-Credentials", value: "true" },
           {
             key: "Access-Control-Allow-Origin",
-            value: "http://51.77.211.245:3000/",
+            value: "*",
           },
           {
             key: "Access-Control-Allow-Methods",

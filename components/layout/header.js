@@ -69,20 +69,20 @@ export default function Header({ data }) {
   const [mmLoaded, setMM] = useState(false);
 
   useEffect(() => {
-  const applyMM = () => {
-    if (
-      window?.innerWidth < breakpoint &&
-      !!window.jQuery?.fn?.meanmenu &&
-      !mmLoaded
-    ) {
-      window.jQuery("nav#dropdown").meanmenu();
-      window.mmSetupFront = true;
-      setMM(true);
-    }
-  };
+    const applyMM = () => {
+      if (
+        window?.innerWidth < breakpoint &&
+        !!window.jQuery?.fn?.meanmenu &&
+        !mmLoaded
+      ) {
+        window.jQuery("nav#dropdown").meanmenu();
+        window.mmSetupFront = true;
+        setMM(true);
+      }
+    };
 
     if (typeof window !== "undefined") applyMM();
-  }, []);
+  }, [mmLoaded]);
 
   return (
     <>
