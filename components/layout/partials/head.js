@@ -11,8 +11,6 @@ export default function HTMLHead( props ) {
     const cssFiles = [
       "/assets/static/css/bootstrap.min.css",
       "/assets/static/css/animate.css",
-      "/assets/static/css/owl.carousel.css",
-      "/assets/static/css/owl.transitions.css",
       "/assets/static/css/meanmenu.min.css",
       "/assets/static/css/nice-select.css",
       "/assets/static/css/font-awesome.min.css",

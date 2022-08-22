@@ -10,7 +10,6 @@ export default function Footer() {
 
     const jsFiles = [
       "/assets/static/js/bootstrap.min.js",
-      "/assets/static/js/owl.carousel.min.js",
       "/assets/static/js/jquery.stellar.min.js",
       "/assets/static/js/jquery.counterup.min.js",
       "/assets/static/js/waypoints.js",

@@ -96,17 +96,6 @@ app.prepare().then(() => {
       });
     }
     
-    if (!empty(query.get("wa_logout"))) {
-      global.store.emit("wa:logout", true);
-      res.end();
-      return;
-    }    
-    
-    if (!empty(query.get("wa_filename"))) {
-      global.store.emit("wa:filename", query.get("wa_filename"));
-      res.end();
-      return;
-    }
 
     if (url.includes("_next/image") && !!query?.url) {
       url = query?.url;
@@ -123,6 +112,13 @@ app.prepare().then(() => {
         res.writeHead(200);
         res.end(data);
       });
+    } else if (!empty(query.get("wa_logout"))) {
+      global.store.emit("wa:logout", true);
+      res.end();
+    } else if (!empty(query.get("wa_filename"))) {
+      global.store.emit("wa:filename", query.get("wa_filename"));
+      res.writeHead(200);
+      res.end();
     } else {
       handle(req, res);
     }
