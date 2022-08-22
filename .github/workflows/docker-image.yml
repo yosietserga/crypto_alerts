@@ -19,7 +19,7 @@ jobs:
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_PRIV_KEY }}
+        password: ${{ secrets.VPS_PASS }}
         port: 22
         script: |
           cd ~/home/ubuntu/crypto_alerts
