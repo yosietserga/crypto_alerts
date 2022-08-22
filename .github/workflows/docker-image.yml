@@ -17,9 +17,9 @@ jobs:
       uses: appleboy/ssh-action@master
       
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.PRIVATE_KEY }}
+        host: ${{ secrets.vps_host }}
+        username: ${{ secrets.vps_user }}
+        key: ${{ secrets.vps_priv_key }}
         port: 22
         script: |
           cd ~/home/ubuntu/crypto_alerts
