@@ -22,7 +22,7 @@ jobs:
         password: ${{ secrets.VPS_PASS }}
         port: 22
         script: |
-          cd ~/home/ubuntu/crypto_alerts
+          cd crypto_alerts
           git pull origin master
           git status
           sudo docker build --pull --rm -f "DockerFile" -t cryptoalerts:latest "."
