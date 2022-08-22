@@ -23,7 +23,7 @@ function AdminContainer(mainProps) {
   const [session, setSession] = useState();
 
   const signOut = () => {
-    //return;
+    return;
     setSession({});
     removeCookie("uuid");
     removeCookie("accessToken");
