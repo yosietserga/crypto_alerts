@@ -22,6 +22,7 @@ RUN \
 FROM node:16-alpine AS builder
 WORKDIR /apps
 COPY --from=deps /apps/node_modules ./node_modules
+RUN chown 1001:1001 /apps
 COPY --chown=1001:1001 . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
@@ -78,6 +79,8 @@ COPY --from=builder /apps/components ./components
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /apps/.next ./.next
+
+RUN chown -R 1001:1001 /apps
 
 USER nextjs
 
