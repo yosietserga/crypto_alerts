@@ -6,7 +6,7 @@ const HOST = process.env.BASE_URL ?? "http://localhost";
 const baseurl = HOST + ":" + PORT;
 
 const myLoader = ({ src, width, quality }) => {
-  return `${baseurl}/${public_path}${src}?w=${width}&q=${quality || 75}`;
+  return `${public_path}${src}?w=${width}&q=${quality || 75}`;
 };
 
 export default function Img({ s, a, c, w, h }) {

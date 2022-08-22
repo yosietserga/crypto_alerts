@@ -3,8 +3,11 @@ FROM node:16-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk update && apk add git
-WORKDIR /app
+WORKDIR /apps
 
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+RUN chown 1001:1001 /apps
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
@@ -15,12 +18,11 @@ RUN \
    else echo "Lockfile not found." && exit 1; \
    fi
  
-
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+WORKDIR /apps
+COPY --from=deps /apps/node_modules ./node_modules
+COPY --chown=1001:1001 . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -33,7 +35,7 @@ RUN yarn build
 
 # Production image, copy all the files and run next
 FROM node:16-alpine AS runner
-WORKDIR /app 
+WORKDIR /apps 
 
 ENV NODE_ENV production
 ENV PORT 3000
@@ -45,40 +47,40 @@ RUN adduser --system --uid 1001 nextjs
 
 # You only need to copy next.config.js if you are NOT using the default configuration
 #copying build and modules folders
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
+COPY --from=builder /apps/node_modules ./node_modules
+COPY --from=builder /apps/.next ./.next
 #copying config files
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/schema.prisma ./schema.prisma
-COPY --from=builder /app/postcss.config.js ./postcss.config.js
-COPY --from=builder /app/tailwind.config.js ./tailwind.config.js
-COPY --from=builder /app/.env ./.env
+COPY --from=builder /apps/next.config.js ./
+COPY --from=builder /apps/package.json ./package.json
+COPY --from=builder /apps/schema.prisma ./schema.prisma
+COPY --from=builder /apps/postcss.config.js ./postcss.config.js
+COPY --from=builder /apps/tailwind.config.js ./tailwind.config.js
+COPY --from=builder /apps/.env ./.env
 #copying enrtypoint files
-COPY --from=builder /app/server.js ./server.js
-COPY --from=builder /app/serverWhatsapp.js ./serverWhatsapp.js
-COPY --from=builder /app/serverBinance.js ./serverBinance.js
+COPY --from=builder /apps/server.js ./server.js
+COPY --from=builder /apps/serverWhatsapp.js ./serverWhatsapp.js
+COPY --from=builder /apps/serverBinance.js ./serverBinance.js
 #copying DB 
-COPY --from=builder /app/db.db ./db.db
-#copying app files
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/workers ./workers
-COPY --from=builder /app/utils ./utils
-#COPY --from=builder /app/temp ./temp
-COPY --from=builder /app/styles ./styles
-COPY --from=builder /app/src ./src
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/pages ./pages
-COPY --from=builder /app/libs ./libs
-COPY --from=builder /app/context ./context
-COPY --from=builder /app/components ./components
+COPY --from=builder /apps/db.db ./db.db
+#copying apps files
+COPY --from=builder /apps/public ./public
+COPY --from=builder /apps/workers ./workers
+COPY --from=builder /apps/utils ./utils
+#COPY --from=builder /apps/temp ./temp
+COPY --from=builder /apps/styles ./styles
+COPY --from=builder /apps/src ./src
+COPY --from=builder /apps/prisma ./prisma
+COPY --from=builder /apps/pages ./pages
+COPY --from=builder /apps/libs ./libs
+COPY --from=builder /apps/context ./context
+COPY --from=builder /apps/components ./components
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /apps/.next ./.next
 
 USER nextjs
 
 EXPOSE 3000
 
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "dev" ]
