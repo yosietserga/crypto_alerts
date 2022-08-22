@@ -26,5 +26,5 @@ jobs:
           git pull
           git status
           sudo sh ./docker_stop.sh
-          sudo docker build --pull --rm -f "DockerFile" -t cryptoalerts:latest "."
+          sudo docker build --pull --rm -d "DockerFile" -t cryptoalerts:latest "."
           sudo docker run -p 3000:3000 cryptoalerts
