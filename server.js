@@ -5,7 +5,6 @@ const next = require("next");
 const { PrismaClient } = require("@prisma/client");
 const BinanceServer = require("./serverBinance");
 const WhatsappServer = require("./serverWhatsapp");
-const TelegramServer = require("./serverTelegram");
 const { isset, empty, notify, log } = require("./utils/helpers");
 const Freezer = require("freezer-js");
 
@@ -51,7 +50,6 @@ app.prepare().then(() => {
 
       wss.of("/").on("connection", (socket) => {
         console.log("ws main channel connected");
-        TelegramServer(socket, prisma);
 
         if (__debug)
           console.log("WebSocket client connected for all ", socket.id);
@@ -69,7 +67,6 @@ app.prepare().then(() => {
       wss.of("/telegram").on("connection", (socket) => {
         console.log("ws telegram channel connected");
 
-        TelegramServer(socket, prisma);
 
         if (__debug)
           console.log("WebSocket client connected for telegram ", socket.id);
