@@ -23,7 +23,8 @@ jobs:
         port: 22
         script: |
           cd crypto_alerts
-          git pull origin master
+          git pull
           git status
+          sudo sh ./docker_stop.sh
           sudo docker build --pull --rm -f "DockerFile" -t cryptoalerts:latest "."
           sudo docker run -p 3000:3000 cryptoalerts
