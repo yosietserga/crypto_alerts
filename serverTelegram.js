@@ -91,11 +91,12 @@ const loadCommand = async (command) => {
   }
 }
 
-const applyCommand = async (command, context, cb) => {
+const execCommand = async (command, context, cb) => {
   // check if plugin folder exists 
   // check if DB settings exists 
   // check if plugin::command exists  
-
+  // who can call this command 
+  // has permissions to call this command 
   const fnCommand = await loadCommand(command);
   if (fnCommand) {
     fnCommand(context).then(cb);
@@ -119,7 +120,7 @@ const TelegramServer = async (wss, prisma) => {
 
     sock.sendMessage(chatId, `Using command [${command}] for ${nameUser}`);
     /*
-    applyCommand(command, msg, (resp) => {
+    execCommand(command, msg, (resp) => {
       sock.sendMessage(chatId, `Using this command [${command}] for ${nameUser}`);
     });
     */
