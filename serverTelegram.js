@@ -96,7 +96,7 @@ const execCommand = async (command, context, cb) => {
   // check if DB settings exists 
   // check if plugin::command exists  
   // who can call this command 
-  // has permissions to call this command 
+  // has permissions to call this command   
   const fnCommand = await loadCommand(command);
   if (fnCommand) {
     fnCommand(context).then(cb);

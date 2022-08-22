@@ -221,8 +221,6 @@ const BinanceServer = async (wss, prisma) => {
                       value = __volume[0];
                     }
 
-                    log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", [__close.pop(), __close[0]]);
-
                     let result = version_compare(
                       r[opt.option],
                       value,
@@ -247,23 +245,26 @@ const BinanceServer = async (wss, prisma) => {
                   });
 
                   const testsResult = passed.every(v => v);
-                  log(testsResult);
+
                   if (testsResult) {
                     let text = `*** CRYPTO ALERT ***
 
 ID: ${alertId}
 SYMBOL: ${chart.symbol}
-tempo: ${chart.tempo}
+PRICE: ${close[0]}
+TEMPO: ${chart.tempo}
+SEE: ${global.baseURL}/panel/alerts/update/${alertId}
 
-Criterias/Signals:`;
+`;
+                    /*
                     for (let j in signals[alertId]) {
                 text += `
 ${j.replace(":", " ")}:
   ${signals[alertId][j].join(", ")}
 `;
                     }
+                    */
 
-                    console.log(text);
                     //broadcast event into server
                     global?.notify({
                       body: { text },
@@ -311,10 +312,12 @@ ${j.replace(":", " ")}:
 
 ID: ${alertId}
 SYMBOL: ${chart.symbol}
-tempo: ${chart.tempo}
+PRICE: ${close[0]}
+TEMPO: ${chart.tempo}
+SEE: ${global.baseURL}/panel/alerts/update/${alertId}
 
-Criterias/Signals:
 `;
+              /*
               for (let j in signals[alertId]) {
                 text += `
 ${j.replace(":", " ")}:
@@ -322,8 +325,8 @@ ${j.replace(":", " ")}:
 `;
 
               }
+              */
 
-              console.log(text);
               //broadcast event into server
               global?.notify({
                 body: { text },
