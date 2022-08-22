@@ -8,7 +8,6 @@ const baseurl = HOST + ":" + PORT;
 const WsContext = React.createContext(null);
 
 const WsProvider = ({ children }) => {
-  console.log(process.env.BASE_URL);
   fetch("/api/ws", {
     method: "GET",
     cache: "no-cache",

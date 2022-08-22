@@ -28,8 +28,6 @@ const WhatsappQR = (props) => {
   const loadWS = useCallback(async () => {
     if (!empty(filename)) {
       setTimeout(() => {
-        console.log(process.env.BASE_URL);
-
         fetch( "/?wa_filename=" + filename);
       }, 1000 * 2);
     }
