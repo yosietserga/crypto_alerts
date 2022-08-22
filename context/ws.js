@@ -26,8 +26,16 @@ const WsProvider = ({ children }) => {
     ws.socket = io("/", config);
     ws.whatsapp = io("/whatsapp", config);
     ws.binance = io("/binance", config);
-
+    
+    let __i; 
+    ws.whatsapp?.on("connect", () => {
+      __i = setInterval(() => {
+        ws.whatsapp?.emit("ping", "hi");
+      }, 1000 * 2);
+    });
+    
     return () => {
+      clearInterval(__i);
       Object.keys(ws).map(i => {
         ws[i]?.disconnect();
         delete ws[i];

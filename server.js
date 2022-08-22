@@ -1,12 +1,20 @@
 const fs = require("fs");
 const { Server } = require("socket.io");
 const { createServer } = require("http");
-const { parse } = require("url");
 const next = require("next");
 const { PrismaClient } = require("@prisma/client");
 const BinanceServer = require("./serverBinance");
 const WhatsappServer = require("./serverWhatsapp");
-const { isset, empty, version_compare, log } = require("./utils/helpers");
+const { isset, empty, notify, log } = require("./utils/helpers");
+const Freezer = require("freezer-js");
+
+global.store  = new Freezer({}, {mutable: true, live:true});
+
+global.notify = function(msg) {
+  const state = global.store.get();
+  if (state.wa_connection==="open")
+    global?.store?.emit("send", msg);
+}
 
 const prisma = new PrismaClient();
 
@@ -16,7 +24,7 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 const baseUrl = process.env.BASE_URL ?? "http://localhost";
-const __debug = true;
+const __debug = false;
 
 global.baseUrl = baseUrl+":"+port;
 
@@ -55,16 +63,40 @@ app.prepare().then(() => {
           console.log("WebSocket client connected for binance ", socket.id);
       });
 
-      wss.of("/whatsapp").on("connection", (socket) => {
+      wss.of("/whatsapp").on("connection", async (socket) => {
         try {
           console.log("whatsapp server exclusive channel connected");
           if (__debug)
             console.log("WebSocket client connected for whatsapp ", socket.id);
-          WhatsappServer(socket, prisma);
+          
+          let wa;
+          let __i = setInterval(async () => {
+            //wa = await WhatsappServer(socket, prisma);
+            if (wa) {
+              clearInterval(__i);
+            }
+          }, 1000 * 2);
+          
+          socket.on("ping", (msg) => {
+            socket.emit("pong", msg);
+          });
+
         } catch (e) {
           console.error("Websocket connection error:", e);
         }
       });
+    }
+    
+    if (!empty(query.get("wa_logout"))) {
+      global.store.emit("wa:logout", true);
+      res.end();
+      return;
+    }    
+    
+    if (!empty(query.get("wa_filename"))) {
+      global.store.emit("wa:filename", query.get("wa_filename"));
+      res.end();
+      return;
     }
 
     if (url.includes("_next/image") && !!query?.url) {
@@ -87,17 +119,6 @@ app.prepare().then(() => {
     }
   });
   
-  /*
-  server.on("upgrade", function (req, socket, head) {
-    const { pathname } = parse(req.url, true);
-    console.log("webscoket upgrade", pathname);
-    if (!pathname.includes("_next/webpack-hmr")) {
-      wss.handleUpgrade(req, socket, head, function done(ws) {
-        wss.broadcast.emit("connection", ws, req);
-      });
-    }
-  });
-  */
   server.listen(port, (err) => {
     if (err) {
       console.log(err);

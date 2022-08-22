@@ -1,40 +1,37 @@
-import {useState, useEffect, useCallback} from "react";
+import {useState, useEffect, useCallback, useContext} from "react";
 import qr from "qr-image";
 import io from "socket.io-client";
-import { empty, isset, log } from "../../../utils/common";
+import { empty, doUntil, isset, log } from "../../../utils/common";
+import { StoreContext } from "../../../context/store";
+import { WsContext } from "../../../context/ws";
 
 let i;
+let _i;
 let isLoaded;
 let lastFilename;
 
 const PORT = process.env.PORT ?? 3000;
 const HOST = process.env.BASE_URL ?? "http://localhost";
 const baseurl = HOST + ":" + PORT;
-
+let __i = null;
 const WhatsappQR = (props) => {
   const { filename } = props;
   const [qrImage, setQR] = useState();
-  const [socket, setSocket] = useState();
+  const [connObject, setConnection] = useState({});
   const [isConnected, setConnected] = useState(true);
+  const [connectionUpdated, setConnectionUpdated] = useState(false);
+  const [sentBack, setSent] = useState(false);
 
-  if (!empty(filename)) {    
-    fetch(baseurl+"/api/ws?f="+ filename);
-  }
+  const ws = useContext(WsContext);
+  const store = useContext(StoreContext);
 
   const loadWS = useCallback(async () => {
-    if (!socket) {
-      setSocket(
-        io("/whatsapp", {
-          withCredentials: false,
-          transports: ["websocket"],
-        })
-      );
-
-      socket?.on("connect", () => {
-        setConnected(true);
-      });
+    if (!empty(filename)) {
+      setTimeout(() => {
+        fetch(baseurl + "/?wa_filename=" + filename);
+      }, 1000 * 2);
     }
-  }, [socket, setSocket, setConnected]);
+  }, [filename, ws]);
 
   useEffect(() => {
     loadWS();
@@ -44,20 +41,51 @@ const WhatsappQR = (props) => {
       lastFilename = filename;
     }
 
-    if (isConnected && socket) {
-      socket?.on("error", (msg) => {
+    if (ws?.whatsapp) {
+      ws?.whatsapp?.on("error", (msg) => {
         log("error", msg);
       });
 
-      socket?.on("open", (msg) => {
+      ws?.whatsapp?.on("connection", (msg) => {
+        const {data} = JSON.parse(msg);
+        if (data?.connection === "connected") {
+          setTimeout(() => {
+            console.log("sending message to server ...");
+            if (!sentBack) {
+              /*
+              ws?.whatsapp?.emit(
+                "send",
+                JSON.stringify({
+                  body: { text: "Hello World" },
+                  id: "someidforworkflowcontrol",
+                })
+              );
+              setSent(true);
+              */
+            }
+          }, 1000 * 20);
+        }
+        if (data?.connection === "disconnected") {
+        }
+        if (data?.connection === "connecting") {
+        }
+        log("connection", data);
+      });
+
+      ws?.whatsapp?.on("open", (msg) => {
         log("opened", msg);
       });
 
-      socket?.on("close", (msg) => {
+      ws?.whatsapp?.on("close", (msg) => {
         log("closed", msg);
       });
 
-      socket?.on("connection.update", (m) => {
+      ws?.whatsapp?.on("sent", (msg) => {
+        log("SENT", JSON.parse(msg));
+        setSent(false);
+      });
+
+      ws?.whatsapp?.on("connection.update", (m) => {
         let { data } = JSON.parse(m);
 
         if (data?.qr) {
@@ -69,19 +97,19 @@ const WhatsappQR = (props) => {
             let code = qr.imageSync(data.qr, { type: "svg" });
             setQR(code);
           }, 1000);
-        } else if (data.connection === "close") {
-          setQR(false);
-        } else if (data.connection === "open") {
-          setQR(false);
         } else {
           setQR(false);
+          setConnection(data);
+          if (data.connection==="open") {
+            
+          }
         }
       });
     }
-  }, [loadWS, isConnected, setConnected, socket, filename]);
+  }, [ws, loadWS, isConnected, setConnected, filename, sentBack, setSent]);
 
   const handleWALogout = (e) => {
-    fetch(baseurl + "/api/ws?logout=1");
+    fetch(baseurl + "/?wa_logout=1");
   };
 
   if (!qrImage) {
@@ -94,6 +122,32 @@ const WhatsappQR = (props) => {
         >
           Logout from whatsApp
         </button>
+        <h3>WhatsApp connection Status:</h3>
+        <p
+          style={{
+            background: "#fff",
+            border: "solid 1px #eee",
+            padding: "10px",
+            margin: "10px",
+          }}
+        >
+          <strong>session: {filename}</strong>
+        </p>
+        <ul
+          style={{
+            border: "solid 1px #eee",
+            padding: "10px",
+            margin: "10px",
+          }}
+        >
+          {Object.keys(connObject).map((i) => {
+            return (
+              <li key={i}>
+                - {i}: {JSON.stringify(connObject[i])}
+              </li>
+            );
+          })}
+        </ul>
       </>
     );
   }
@@ -102,8 +156,24 @@ const WhatsappQR = (props) => {
     <>
       <div
         dangerouslySetInnerHTML={{ __html: qrImage }}
-        style={{ maxWidth: "250px" }}
+        style={{
+          maxWidth: "250px",
+          background: "#fff",
+          border: "solid 1px #eee",
+          padding: "10px",
+          margin: "10px",
+        }}
       />
+      <p
+        style={{
+          background: "#fff",
+          border: "solid 1px #eee",
+          padding: "10px",
+          margin: "10px",
+        }}
+      >
+        <strong>session: {filename}</strong>
+      </p>
     </>
   );
 };

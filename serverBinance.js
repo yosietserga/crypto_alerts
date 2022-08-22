@@ -1,7 +1,7 @@
 const Binance = require("node-binance-api");
 const tulind = require("tulind");
 const managerWorker = require("./workers/manager");
-const { isset, empty, version_compare, log } = require("./utils/helpers");
+const { isset, empty, version_compare, log, unique, rtrim } = require("./utils/helpers");
 
 const BinanceServer = async (wss, prisma) => {
   const binance = new Binance();
@@ -69,7 +69,7 @@ const BinanceServer = async (wss, prisma) => {
 
           if (c.type === "indicator" && isset(tulind.indicators[c.indicator])) {
             if (!isset(criterias[alert.id][__index][c.indicator])) {
-              signals[alert.id][__index + ":" + c.indicator] = {};
+              signals[alert.id][__index + ":" + c.indicator] = [];
               criterias[alert.id][__index][c.indicator] = {
                 inputs: [],
                 options: [],
@@ -101,7 +101,7 @@ const BinanceServer = async (wss, prisma) => {
           } else {
             if (!isset(criterias[alert.id][__index]["price"])) {
               criterias[alert.id][__index]["price"] = [];
-              signals[alert.id][__index + ":price"] = {};
+              signals[alert.id][__index + ":price"] = [];
             }
             criterias[alert.id][__index]["price"].push({
               comparator: c.comparator,
@@ -201,28 +201,76 @@ const BinanceServer = async (wss, prisma) => {
                 if (!err) {
                   results.map((v, k) => {
                     r[output_names[k].replace(/[^A-Za-z\d\s]/gi, "")] =
-                      v[v.length - 1];
+                      v[0];
                   });
 
                   let passed = c.outputs.map((opt, k) => {
                     //TODO: transform dynamic values like ohlc and percents referencials
-                    return version_compare(
+                    let value;
+                    if (!isNaN(parseFloat(opt.trigger))) {
+                      value = opt.trigger;
+                    } else if (opt.trigger.toLowerCase() === "open") {
+                      value = __open[0];
+                    } else if (opt.trigger.toLowerCase() === "high") {
+                      value = __high[0];
+                    } else if (opt.trigger.toLowerCase() === "low") {
+                      value = __low[0];
+                    } else if (opt.trigger.toLowerCase() === "close") {
+                      value = __close[0];
+                    } else if (opt.trigger.toLowerCase() === "volume") {
+                      value = __volume[0];
+                    }
+
+                    log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", [__close.pop(), __close[0]]);
+
+                    let result = version_compare(
                       r[opt.option],
-                      opt.trigger,
+                      value,
                       opt.comparator
                     );
+
+                    if (!isset(signals[alertId][__index + ":" + indicator]))
+                      signals[alertId][__index + ":" + indicator] = [];
+
+                    signals[alertId][__index + ":" + indicator].push(
+                      `${parseFloat(r[opt.option]).toFixed(2)} is ${opt.comparator} ${
+                        opt.comparator === "equal" ? "to" : "than"
+                      } ${rtrim(value, "0")}`
+                    );
+
+                    signals[alertId][__index + ":" + indicator] =
+                      signals[alertId][__index + ":" + indicator].filter(
+                        unique
+                      );
+
+                    return result;
                   });
 
-                  const testsResult = passed.reduce((a, b) => {
-                    return a && b;
-                  });
-
-                  signals[alertId][__index + ":" + indicator] = {
-                    results: r,
-                    passed: testsResult,
-                  };
-
+                  const testsResult = passed.every(v => v);
+                  log(testsResult);
                   if (testsResult) {
+                    let text = `*** CRYPTO ALERT ***
+
+ID: ${alertId}
+SYMBOL: ${chart.symbol}
+tempo: ${chart.tempo}
+
+Criterias/Signals:`;
+                    for (let j in signals[alertId]) {
+                text += `
+${j.replace(":", " ")}:
+  ${signals[alertId][j].join(", ")}
+`;
+                    }
+
+                    console.log(text);
+                    //broadcast event into server
+                    global?.notify({
+                      body: { text },
+                      id: "alertid_" + alertId,
+                    });
+
+                    //send to client 
                     wss?.broadcast?.emit(
                       "cryptoalert",
                       JSON.stringify({
@@ -243,20 +291,45 @@ const BinanceServer = async (wss, prisma) => {
             const pricesComparison = criterias[alertId][__index][indicator];
 
             let passed = pricesComparison.map((opt, k) => {
-              let lastPrice = __close.pop();
-              return version_compare(opt.trigger, lastPrice, opt.comparator);
+              let lastPrice = __close[0];
+              let result = version_compare(lastPrice, opt.trigger, opt.comparator);
+              if (!isset(signals[alertId][__index + ":price"])) signals[alertId][__index + ":price"] = [];
+              signals[alertId][__index + ":price"].push(
+                `${rtrim(lastPrice,"0")} is ${opt.comparator} ${opt.comparator==="equal"?"to":"than"} ${opt.trigger}`
+              );
+              signals[alertId][__index + ":price"] = signals[alertId][__index + ":price"].filter(unique);
+              
+              return result;
             });
 
             const testsResult = passed.reduce((a, b) => {
               return a && b;
             });
 
-            signals[alertId][__index + ":price"] = {
-              results: "prices",
-              passed: testsResult,
-            };
-
             if (testsResult) {
+              let text = `*** CRYPTO ALERT ***
+
+ID: ${alertId}
+SYMBOL: ${chart.symbol}
+tempo: ${chart.tempo}
+
+Criterias/Signals:
+`;
+              for (let j in signals[alertId]) {
+                text += `
+${j.replace(":", " ")}:
+  ${signals[alertId][j].join(", ")}
+`;
+
+              }
+
+              console.log(text);
+              //broadcast event into server
+              global?.notify({
+                body: { text },
+                id: "alertid_" + alertId,
+              });
+
               wss?.broadcast?.emit(
                 "cryptoalert",
                 JSON.stringify({
@@ -271,7 +344,7 @@ const BinanceServer = async (wss, prisma) => {
     }
   }
 
-  myData.set("debug", true);
+  myData.set("debug", false);
   myData.set("doorman:criterias", criteriasFn);
   myData.set("config:percentProfit", 0.4);
   myData.set("config:occurrences", 10);

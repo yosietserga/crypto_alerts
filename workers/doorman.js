@@ -28,7 +28,7 @@ function start() {
   let interval = setInterval(function () {
     //__listen();
     __callCriteria();
-  }, 1000 * 10);
+  }, 1000 * 10 * 1);
 }
 
 function addCriteria(...fnName) {
@@ -199,22 +199,17 @@ if (!isset(data.trends)) data.trends = {};
 
 function showBTCBP() {
   let symbol = "btcusdt";
-  let strRepeatNumber = 116;
+  let strRepeatNumber = 50;
   const printBK = (chart, ticks, period) => {
-    toprint =
-      "\n**** BREAK POINTS for " +
-      period +
-      " ****. Actualizado: " +
-      Date().toLocaleString() +
-      "\n";
-    toprint += "-".repeat(strRepeatNumber) + "\n";
-    toprint +=
-      "SYMBOL\t\tSIGNAL\t\tENTRY/OUT POINT\t\tVolume\t\t\tDistance\t\tDate\n";
-    toprint += "=".repeat(strRepeatNumber) + "\n";
+    toprint = `BREAK POINTS FOR ${period}
+${"-".repeat(strRepeatNumber)}
+${Date().toLocaleString()}
+${"-".repeat(strRepeatNumber)}
+`;
     let firstOne = true;
     chart.breakers
       //.reverse()
-      .slice(0, 4)
+      .slice(0, 2)
       .map((bp, i) => {
         /*
             {
@@ -243,12 +238,21 @@ function showBTCBP() {
             }
             */
         if (isset(bp)) {
-          toprint += symbol + "\t\t";
-          toprint += bp.nextMove == "UP" ? "BUY\t\t" : "SELL\t\t";
-          toprint += `${parseFloat(bp.close)?.toFixed(2)} \t\t${parseFloat(
-            bp?.volume
-          )?.toFixed(4)} \t\t${bp.distance}\t\t${bp.date}\t\t`;
-          toprint += "\n";
+          toprint += `
+Symbol: ${symbol} 
+Operation: ${bp.nextMove == "UP" ? "BUY" : "SELL"} 
+Price: ${parseFloat(bp.close)?.toFixed(2)} 
+Tempo: ${period}
+When: ${bp.date}
+Amplitude: ${parseFloat(bp.amplitud)?.toFixed(2)}%
+Spread: ${parseFloat(bp.spread)?.toFixed(2)}%
+Distance: ${bp.distance}
+Trades: ${bp.trades}
+Volume: ${parseFloat(bp.volume)?.toFixed(2)}
+Engulfed: ${isEngulfed ? "Yes" : "No"}
+          
+        `;
+          
 
           if (!isset(data.trends[symbol + ":" + period]) && firstOne)
             data.trends[symbol + ":" + period] = bp;
@@ -257,17 +261,30 @@ function showBTCBP() {
             firstOne
           ) {
             data.trends[symbol + ":" + period] = bp;
-            notify(
-              "BTCUSDT Trend Breaks " + bp.nextMove,
-              `Period: ${period}\nOpen: ${bp.open}\nClose: ${bp.close}\nDate: ${bp.date}`
-            );
+
+            const text = `*BTCUSDT Trend Breakout ${bp.nextMove}*
+Period: ${period}
+Open: ${bp.open}
+Close: ${bp.close}
+Date: ${bp.date}`;
+            //broadcast event into server
+            global?.notify({
+              body: { text },
+              id: symbol + ":" + period,
+            });
           }
           firstOne = false;
         }
       });
-    toprint += "-".repeat(strRepeatNumber) + "\n";
-    toprint += "**** /BREAK POINTS FOR " + period + " ****\n\n";
-    log(toprint);
+    toprint += `
+${"-".repeat(strRepeatNumber)}`;
+    //log(toprint);
+      /*
+      global?.notify({
+        body: { text: toprint },
+        id: symbol + ":" + period,
+      });
+      */
   };
 
     const criterias = getCriterias();
