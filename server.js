@@ -5,9 +5,11 @@ const next = require("next");
 const { PrismaClient } = require("@prisma/client");
 const BinanceServer = require("./serverBinance");
 const WhatsappServer = require("./serverWhatsapp");
+const TelegramServer = require("./serverTelegram");
 const { isset, empty, notify, log } = require("./utils/helpers");
 const Freezer = require("freezer-js");
 
+process.on("unhandledRejection", console.log);
 global.store  = new Freezer({}, {mutable: true, live:true});
 
 global.notify = function(msg) {
@@ -49,6 +51,7 @@ app.prepare().then(() => {
 
       wss.of("/").on("connection", (socket) => {
         console.log("ws main channel connected");
+        TelegramServer(socket, prisma);
 
         if (__debug)
           console.log("WebSocket client connected for all ", socket.id);
@@ -63,6 +66,15 @@ app.prepare().then(() => {
           console.log("WebSocket client connected for binance ", socket.id);
       });
 
+      wss.of("/telegram").on("connection", (socket) => {
+        console.log("ws telegram channel connected");
+
+        TelegramServer(socket, prisma);
+
+        if (__debug)
+          console.log("WebSocket client connected for telegram ", socket.id);
+      });
+
       wss.of("/whatsapp").on("connection", async (socket) => {
         try {
           console.log("whatsapp server exclusive channel connected");
@@ -71,7 +83,7 @@ app.prepare().then(() => {
           
           let wa;
           let __i = setInterval(async () => {
-            //wa = await WhatsappServer(socket, prisma);
+            wa = await WhatsappServer(socket, prisma);
             if (wa) {
               clearInterval(__i);
             }

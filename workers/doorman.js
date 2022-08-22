@@ -108,6 +108,7 @@ async function backtesting(symbol, period, cb) {
       let ticksCount = 1;
       let startZone = false;
       let prevTick = false;
+      
       Object.keys(ticks)
         .reverse()
         .map((i) => {
